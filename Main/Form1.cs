@@ -19,18 +19,34 @@ namespace Main
         public Form1()
         {
             InitializeComponent();
-            
+            comboBox1.SelectedIndex = 0;
         }
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            var res = Task.Run(() => GetXHR("https://api.swap.gg/prices/570"));
-            swapItems = SwapItems.FromJson(res.Result);
+            if (radioButton2.Checked)
+            {
+                var res = Task.Run(() => GetXHR("https://api.swap.gg/prices/252490"));
+                swapItems = SwapItems.FromJson(res.Result);
+                GetLootItems("https://loot.farm/fullpriceRUST.json");
+            }
+            else if (radioButton1.Checked)
+            {
+                var res = Task.Run(() => GetXHR("https://api.swap.gg/prices/570"));
+                swapItems = SwapItems.FromJson(res.Result);
+                GetLootItems("https://loot.farm/fullpriceDOTA.json");
+            }
+            else
+            {
+                var res = Task.Run(() => GetXHR("https://api.swap.gg/prices/433850"));
+                swapItems = SwapItems.FromJson(res.Result);
+                GetLootItems("https://loot.farm/fullpriceH1Z1.json");
+            }
+
             //var res2 = Task.Run(() => GetXHR("https://dota.money/570/load_bots_inventory"));
             //textBox1.Text = res2.Result;
             //Task.Run(() => GetXHRDeals());
 
-            GetLootItems("https://loot.farm/fullpriceDOTA.json");
             dataGridView1.AutoGenerateColumns = true;
             dataGridView1.DataSource = RowGenerator();
         }
@@ -41,7 +57,7 @@ namespace Main
             {
                 new DataColumn("Name", typeof(string)),
                 new DataColumn("Swap", typeof(double)),
-                new DataColumn("Deals", typeof(double)),
+                //new DataColumn("Deals", typeof(double)),
                 new DataColumn("Have(Swap)", typeof(int)),
                 new DataColumn("Max(Swap)", typeof(int)),
                 new DataColumn("Loot", typeof(double)),
@@ -58,7 +74,7 @@ namespace Main
                 {
                     var row = dt.NewRow();
                     row["Name"] = i.MarketName;
-                    row["Swap"] = Math.Round(i.Price.Value * 0.01, 2);
+                    row["Swap"] = Math.Round(i.Price.Value * 0.01 , 2);
                     row["Loot"] = Math.Round(loot[0].Price * 0.01, 2);
                     //row["Deals"] = Math.Round(deals[0].I * 0.01, 2);
                     row["Have(Swap)"] = i.Stock.Have;
@@ -139,7 +155,7 @@ namespace Main
                     var have2 = Convert.ToInt32(dataGridView1.Rows[i].Cells[5].Value);
                     var max2 = Convert.ToInt32(dataGridView1.Rows[i].Cells[6].Value);
 
-                    if (have1 > 0 || have1 < max1 && have2 > 0 && have2 < max2)
+                    if (have1 > 0 || (have1 < max1 || comboBox1.SelectedIndex == 0) && have2 > 0 && (have2 < max2 || comboBox1.SelectedIndex == 0))
                     {
                         var row = dt.NewRow();
 
