@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converter.cs" />
+    <Compile Include="DealsItems.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
