@@ -8,12 +8,8 @@
 
 namespace Main
 {
-    using System;
     using System.Collections.Generic;
-
-    using System.Globalization;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
     public partial class SwapItems
     {
@@ -22,6 +18,7 @@ namespace Main
 
         [JsonProperty("result")]
         public List<Result> Result { get; set; }
+
     }
 
     public partial class Result

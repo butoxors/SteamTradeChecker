@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -11,10 +13,15 @@ namespace Main
 {
     public partial class Form1 : Form
     {
-        public SwapItems swapItems = null;
-        List<LootItems> lootItems = new List<LootItems>();
         readonly HttpClient client = new HttpClient();
+
+        SwapItems swapItems = null;
+        List<LootItems> lootItems = new List<LootItems>();
         DealsItems Deals = new DealsItems();
+        List<DotaMoney> DotaMoneyItems = new List<DotaMoney>();
+
+        private double SWAPPerc = 0.08;
+        private double LOOTPerc = 0.03;
 
         public Form1()
         {
@@ -29,6 +36,9 @@ namespace Main
                 var res = Task.Run(() => GetXHR("https://api.swap.gg/prices/252490"));
                 swapItems = SwapItems.FromJson(res.Result);
                 GetLootItems("https://loot.farm/fullpriceRUST.json");
+                res = Task.Run(() => GetXHR("https://dota.money/570/load_bots_inventory"));
+                DotaMoneyItems = DotaMoney.FromJson(res.Result);
+
             }
             else if (radioButton1.Checked)
             {
@@ -44,48 +54,19 @@ namespace Main
             }
 
             //var res2 = Task.Run(() => GetXHR("https://dota.money/570/load_bots_inventory"));
-            //textBox1.Text = res2.Result;
             //Task.Run(() => GetXHRDeals());
-
             dataGridView1.AutoGenerateColumns = true;
-            dataGridView1.DataSource = RowGenerator();
-        }
-        private DataTable RowGenerator()
-        {
-            DataTable dt = new DataTable();
-            dt.Columns.AddRange(new DataColumn[]
-            {
-                new DataColumn("Name", typeof(string)),
-                new DataColumn("Swap", typeof(double)),
-                //new DataColumn("Deals", typeof(double)),
-                new DataColumn("Have(Swap)", typeof(int)),
-                new DataColumn("Max(Swap)", typeof(int)),
-                new DataColumn("Loot", typeof(double)),
-                new DataColumn("Have(Loot)", typeof(int)),
-                new DataColumn("Max(Loot)", typeof(int)),
-            });
-            var l = swapItems.Result.Where(x => x.Price.Value > 0).OrderByDescending(x => x.Price.Value);
-            foreach (var i in l)
-            {
-                var loot = lootItems.Where(x => x.Name == i.MarketName).ToList();
-                //var deals = Deals.Response.Items.The570.Where(x => x.C == i.MarketName).ToList();
 
-                if (loot.Count != 0 && i.Stock.Have < i.Stock.Max && loot[0].Have < loot[0].Max && i.Stock.Have != 0 && loot[0].Have != 0)
-                {
-                    var row = dt.NewRow();
-                    row["Name"] = i.MarketName;
-                    row["Swap"] = Math.Round(i.Price.Value * 0.01 , 2);
-                    row["Loot"] = Math.Round(loot[0].Price * 0.01, 2);
-                    //row["Deals"] = Math.Round(deals[0].I * 0.01, 2);
-                    row["Have(Swap)"] = i.Stock.Have;
-                    row["Max(Swap)"] = i.Stock.Have;
-                    row["Have(Loot)"] = loot[0].Have;
-                    row["Max(Loot)"] = loot[0].Max;
-                    dt.Rows.Add(row);
-                }
-            }
-            return dt;
+            var l = swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
+            {
+                Name = x.MarketName,
+                PriceSwap = Math.Round((x.Price.Value * 0.01) + (SWAPPerc * (x.Price.Value * 0.01)), 2),
+                PriceLoot = Math.Round((t.Price * 0.01) - (LOOTPerc * (t.Price * 0.01)), 2)
+            }).ToList();
+
+            dataGridView1.DataSource = l;
         }
+ 
         private void GetLootItems(string URL)
         {
             try
@@ -136,39 +117,22 @@ namespace Main
         {
             try
             {
-                DataTable dt = new DataTable();
-
-                dt.Columns.AddRange(new DataColumn[]
+                var l = swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
                 {
-                    new DataColumn("Name", typeof(string)),
-                    new DataColumn("Swap", typeof(double)),
-                    new DataColumn("Loot", typeof(double)),
-                    new DataColumn("%", typeof(double))
-                });
+                    Name = x.MarketName,
+                    PriceSwap = Math.Round(comboBox1.SelectedIndex == 0 ? ((x.Price.Value * 0.01) + (SWAPPerc * (x.Price.Value * 0.01))) : ((x.Price.Value * 0.01) + ((SWAPPerc - 0.05) * (x.Price.Value * 0.01))), 2),
+                    PriceLoot = Math.Round(comboBox1.SelectedIndex == 1 ? ((t.Price * 0.01) + (LOOTPerc * (t.Price * 0.01))) : ((t.Price * 0.01) - (LOOTPerc * (t.Price * 0.01))), 2),
+                    Have1 = x.Stock.Have,
+                    Max1 = x.Stock.Max,
+                    Have2 = t.Have,
+                    Max2 = t.Max
+                })
+                .Where(x => comboBox1.SelectedIndex == 0 ? 
+                (x.Have1 > 0 && x.Have2 < x.Max2) : 
+                (x.Have2 > 0 && x.Have1 < x.Max1))
+                .Select(x => new { Name = x.Name, Loot = x.PriceLoot, Swap = x.PriceSwap, Perc = (comboBox1.SelectedIndex == 0 ? x.PriceLoot / x.PriceSwap : x.PriceSwap / x.PriceLoot) * 100 - 100 }).OrderByDescending(x => x.Perc).ToList();
 
-                for (int i = 0; i < dataGridView1.RowCount; i++)
-                {
-                    var x = Convert.ToDouble(dataGridView1.Rows[i].Cells[1].Value);
-                    var y = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
-                    var have1 = Convert.ToInt32(dataGridView1.Rows[i].Cells[3].Value);
-                    var max1 = Convert.ToInt32(dataGridView1.Rows[i].Cells[4].Value);
-                    var have2 = Convert.ToInt32(dataGridView1.Rows[i].Cells[5].Value);
-                    var max2 = Convert.ToInt32(dataGridView1.Rows[i].Cells[6].Value);
-
-                    if (have1 > 0 || (have1 < max1 || comboBox1.SelectedIndex == 0) && have2 > 0 && (have2 < max2 || comboBox1.SelectedIndex == 0))
-                    {
-                        var row = dt.NewRow();
-
-                        row["Name"] = dataGridView1.Rows[i].Cells[0].Value.ToString();
-                        row["Swap"] = Math.Round(x, 2);
-                        row["Loot"] = Math.Round(y, 2);
-                        row["%"] = 100 - Math.Round((x / y) * 100, 2);
-
-                        dt.Rows.Add(row);
-                    }
-                }
-
-                dataGridView2.DataSource = dt;
+                dataGridView2.DataSource = l;
                 dataGridView2.Update();
             }
             catch (Exception) { }
