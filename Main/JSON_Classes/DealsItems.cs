@@ -10,7 +10,7 @@ namespace Main
 {
     using System;
     using System.Collections.Generic;
-
+    using Support;
     using System.Globalization;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -56,12 +56,12 @@ namespace Main
 
     public partial class DealsItems
     {
-        public static DealsItems FromJson(string json) => JsonConvert.DeserializeObject<DealsItems>(json, Main.Converter.Settings);
+        public static DealsItems FromJson(string json) => JsonConvert.DeserializeObject<DealsItems>(json, Converter.Settings);
     }
 
     public static class Serialize
     {
-        public static string ToJson(this DealsItems self) => JsonConvert.SerializeObject(self, Main.Converter.Settings);
+        public static string ToJson(this DealsItems self) => JsonConvert.SerializeObject(self, Converter.Settings);
     }
 
     internal class ParseStringConverter : JsonConverter

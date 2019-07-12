@@ -8,12 +8,9 @@
 
 namespace Main
 {
-    using System;
     using System.Collections.Generic;
-
-    using System.Globalization;
+    using Support;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
     public partial class LootItems
     {
@@ -36,12 +33,12 @@ namespace Main
 
     public partial class LootItems
     {
-        public static List<LootItems> FromJson(string json) => JsonConvert.DeserializeObject<List<LootItems>>(json, Main.Converter.Settings);
+        public static List<LootItems> FromJson(string json) => JsonConvert.DeserializeObject<List<LootItems>>(json, Converter.Settings);
     }
 
     public static class SerializeLoot
     {
-        public static string ToJson(this List<LootItems> self) => JsonConvert.SerializeObject(self, Main.Converter.Settings);
+        public static string ToJson(this List<LootItems> self) => JsonConvert.SerializeObject(self, Converter.Settings);
     }
 
 }

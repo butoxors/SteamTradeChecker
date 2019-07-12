@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Converters;
 using System.Globalization;
 
-namespace Main
+namespace Main.Support
 {
     internal static class Converter
     {

@@ -10,6 +10,7 @@ namespace Main
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;
+    using Support;
 
     public partial class SwapItems
     {
@@ -71,11 +72,11 @@ namespace Main
 
     public partial class SwapItems
     {
-        public static SwapItems FromJson(string json) => JsonConvert.DeserializeObject<SwapItems>(json, Main.Converter.Settings);
+        public static SwapItems FromJson(string json) => JsonConvert.DeserializeObject<SwapItems>(json, Converter.Settings);
     }
 
     public static class SerializeTrade
     {
-        public static string ToJson(this SwapItems self) => JsonConvert.SerializeObject(self, Main.Converter.Settings);
+        public static string ToJson(this SwapItems self) => JsonConvert.SerializeObject(self, Converter.Settings);
     }
 }

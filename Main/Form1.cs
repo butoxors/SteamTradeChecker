@@ -8,20 +8,20 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Main.Support;
 
 namespace Main
 {
     public partial class Form1 : Form
     {
-        readonly HttpClient client = new HttpClient();
 
-        SwapItems swapItems = null;
-        List<LootItems> lootItems = new List<LootItems>();
+        SwapItems swapItems = new SwapItems();
         DealsItems Deals = new DealsItems();
-        List<DotaMoney> DotaMoneyItems = new List<DotaMoney>();
 
-        private double SWAPPerc = 0.08;
-        private double LOOTPerc = 0.03;
+        List<LootItems> lootItems = new List<LootItems>();
+        List<DotaMoney> DotaMoneyItems = new List<DotaMoney>();
+        List<TradeIt> TradeIts = new List<TradeIt>();
+
 
         public Form1()
         {
@@ -33,24 +33,24 @@ namespace Main
         {
             if (radioButton2.Checked)
             {
-                var res = Task.Run(() => GetXHR("https://api.swap.gg/prices/252490"));
+                var res = Task.Run(() => GetJSONData.GetXHR(Links.SWAP_RUST));
                 swapItems = SwapItems.FromJson(res.Result);
-                GetLootItems("https://loot.farm/fullpriceRUST.json");
-                res = Task.Run(() => GetXHR("https://dota.money/570/load_bots_inventory"));
-                DotaMoneyItems = DotaMoney.FromJson(res.Result);
+                lootItems = LootItems.FromJson(GetJSONData.GetLootItems(Links.LOOT_RUST));
+                //res = Task.Run(() => GetXHR("https://dota.money/570/load_bots_inventory")); //TODO : 
+                //DotaMoneyItems = DotaMoney.FromJson(res.Result); //TODO : 
 
             }
             else if (radioButton1.Checked)
             {
-                var res = Task.Run(() => GetXHR("https://api.swap.gg/prices/570"));
+                var res = Task.Run(() => GetJSONData.GetXHR(Links.SWAP_DOTA));
                 swapItems = SwapItems.FromJson(res.Result);
-                GetLootItems("https://loot.farm/fullpriceDOTA.json");
+                lootItems = LootItems.FromJson(GetJSONData.GetLootItems(Links.LOOT_DOTA));
             }
             else
             {
-                var res = Task.Run(() => GetXHR("https://api.swap.gg/prices/433850"));
+                var res = Task.Run(() => GetJSONData.GetXHR(Links.SWAP_H1Z1));
                 swapItems = SwapItems.FromJson(res.Result);
-                GetLootItems("https://loot.farm/fullpriceH1Z1.json");
+                GetJSONData.GetLootItems(Links.LOOT_RUST);
             }
 
             //var res2 = Task.Run(() => GetXHR("https://dota.money/570/load_bots_inventory"));
@@ -60,57 +60,16 @@ namespace Main
             var l = swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
             {
                 Name = x.MarketName,
-                PriceSwap = Math.Round((x.Price.Value * 0.01) + (SWAPPerc * (x.Price.Value * 0.01)), 2),
-                PriceLoot = Math.Round((t.Price * 0.01) - (LOOTPerc * (t.Price * 0.01)), 2)
+                PriceSwap = Math.Round((x.Price.Value * 0.01) + (Difference.SWAPPercSell * (x.Price.Value * 0.01)), 2),
+                PriceLoot = Math.Round((t.Price * 0.01) - (Difference.LOOTPerc * (t.Price * 0.01)), 2)
             }).ToList();
 
             dataGridView1.DataSource = l;
-        }
- 
-        private void GetLootItems(string URL)
-        {
-            try
-            {
-                using (var webClient = new System.Net.WebClient())
-                {
-                    var json = webClient.DownloadString(URL);
 
-                    lootItems = LootItems.FromJson(json);
-                }
-            }
-            catch (Exception) { }
-        }
+            // TODO : 
+            var tradeit = Task.Run(() => GetJSONData.GetXHR(Links.TRADE_DOTA));
+            TradeIts = TradeIt.FromJson(tradeit.Result);
 
-        private async Task<string> GetXHR(string URL)
-        {
-            string responseBody = "";
-            
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(URL);
-                response.EnsureSuccessStatusCode();
-                responseBody = await response.Content.ReadAsStringAsync();
-                return responseBody;
-            }
-            catch (HttpRequestException) { }
-            return string.Empty;
-        }
-        private async Task GetXHRDeals()
-        {
-            var values = new Dictionary<string, string>
-            {
-               { "appid", "570" }
-            };
-
-            var content = new FormUrlEncodedContent(values);
-            client.DefaultRequestHeaders.Add("content-type", "application /json");
-            client.DefaultRequestHeaders.Add("accept", "application/json, text/javascript, */*; q=0.01");
-            client.DefaultRequestHeaders.Add("cookie", "__cfduid=d2f9f21cb8db798b61850080116104cad1552734072; _ga=GA1.2.703749747.1552734081; sessionID=sg6vmoq81bat5t1q9kpm3dqjgs; lang=ru; _gid=GA1.2.188995789.1562681437; hideIntro=1; sessionID=sg6vmoq81bat5t1q9kpm3dqjgs");
-            var response = await client.PostAsync("https://cs.deals/ajax/botsinventory", content);
-
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            Deals = DealsItems.FromJson(responseString);
         }
 
         private void btnCalc_Click(object sender, EventArgs e)
@@ -120,8 +79,8 @@ namespace Main
                 var l = swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
                 {
                     Name = x.MarketName,
-                    PriceSwap = Math.Round(comboBox1.SelectedIndex == 0 ? ((x.Price.Value * 0.01) + (SWAPPerc * (x.Price.Value * 0.01))) : ((x.Price.Value * 0.01) + ((SWAPPerc - 0.05) * (x.Price.Value * 0.01))), 2),
-                    PriceLoot = Math.Round(comboBox1.SelectedIndex == 1 ? ((t.Price * 0.01) + (LOOTPerc * (t.Price * 0.01))) : ((t.Price * 0.01) - (LOOTPerc * (t.Price * 0.01))), 2),
+                    PriceSwap = Math.Round(comboBox1.SelectedIndex == 0 ? ((x.Price.Value * 0.01) + (Difference.SWAPPercSell * (x.Price.Value * 0.01))) : ((x.Price.Value * 0.01) + ((Difference.SWAPPercBuy) * (x.Price.Value * 0.01))), 2),
+                    PriceLoot = Math.Round(comboBox1.SelectedIndex == 1 ? ((t.Price * 0.01) + (Difference.LOOTPerc * (t.Price * 0.01))) : ((t.Price * 0.01) - (Difference.LOOTPerc * (t.Price * 0.01))), 2),
                     Have1 = x.Stock.Have,
                     Max1 = x.Stock.Max,
                     Have2 = t.Have,
@@ -130,7 +89,13 @@ namespace Main
                 .Where(x => comboBox1.SelectedIndex == 0 ? 
                 (x.Have1 > 0 && x.Have2 < x.Max2) : 
                 (x.Have2 > 0 && x.Have1 < x.Max1))
-                .Select(x => new { Name = x.Name, Loot = x.PriceLoot, Swap = x.PriceSwap, Perc = (comboBox1.SelectedIndex == 0 ? x.PriceLoot / x.PriceSwap : x.PriceSwap / x.PriceLoot) * 100 - 100 }).OrderByDescending(x => x.Perc).ToList();
+                .Select(x => new {
+                    Name = x.Name,
+                    Loot = x.PriceLoot,
+                    Swap = x.PriceSwap,
+                    Perc = (comboBox1.SelectedIndex == 0 ? x.PriceLoot / x.PriceSwap : x.PriceSwap / x.PriceLoot) * 100 - 100
+                })
+                .OrderByDescending(x => x.Perc).ToList();
 
                 dataGridView2.DataSource = l;
                 dataGridView2.Update();
