@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Main.Support;
+using Main.BL;
 
 namespace Main
 {
@@ -20,58 +17,64 @@ namespace Main
 
         List<LootItems> lootItems = new List<LootItems>();
         List<DotaMoney> DotaMoneyItems = new List<DotaMoney>();
-        List<TradeIt> TradeIts = new List<TradeIt>();
+        //List<TradeIt> TradeIts = new List<TradeIt>();
 
-
+        TradeItBL tradeItCore;
         public Form1()
         {
             InitializeComponent();
             comboBox1.SelectedIndex = 0;
         }
-
+        private void MakeRequest(string swap, string loot, string trade)
+        {
+            var res = Task.Run(() => GetJSONData.GetXHR(swap));
+            swapItems = SwapItems.FromJson(res.Result);
+            lootItems = LootItems.FromJson(GetJSONData.GetLootItems(loot));
+            tradeItCore = new TradeItBL(trade);
+        }
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            if (radioButton2.Checked)
+            if (radioButton1.Checked)
             {
-                var res = Task.Run(() => GetJSONData.GetXHR(Links.SWAP_RUST));
-                swapItems = SwapItems.FromJson(res.Result);
-                lootItems = LootItems.FromJson(GetJSONData.GetLootItems(Links.LOOT_RUST));
-                //res = Task.Run(() => GetXHR("https://dota.money/570/load_bots_inventory")); //TODO : 
-                //DotaMoneyItems = DotaMoney.FromJson(res.Result); //TODO : 
-
+                MakeRequest(Links.SWAP_DOTA, Links.LOOT_DOTA, Links.TRADE_DOTA);
             }
-            else if (radioButton1.Checked)
+            /*else if (radioButton2.Checked)
             {
-                var res = Task.Run(() => GetJSONData.GetXHR(Links.SWAP_DOTA));
-                swapItems = SwapItems.FromJson(res.Result);
-                lootItems = LootItems.FromJson(GetJSONData.GetLootItems(Links.LOOT_DOTA));
+                MakeRequest(Links.SWAP_RUST, Links.LOOT_RUST, "");
             }
             else
             {
-                var res = Task.Run(() => GetJSONData.GetXHR(Links.SWAP_H1Z1));
-                swapItems = SwapItems.FromJson(res.Result);
-                GetJSONData.GetLootItems(Links.LOOT_RUST);
-            }
+                MakeRequest(Links.SWAP_H1Z1, Links.LOOT_H1Z1, "");
+            }*/
 
-            //var res2 = Task.Run(() => GetXHR("https://dota.money/570/load_bots_inventory"));
-            //Task.Run(() => GetXHRDeals());
-            dataGridView1.AutoGenerateColumns = true;
+            MakeDataSource();
+        }
+        private void MakeDataSource()
+        {
+            var trade = tradeItCore.GetList().Select(x => new { Name = x.Item1, Count = x.Item2, Price = x.Item3 * 0.01 }).ToList();
 
             var l = swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
             {
                 Name = x.MarketName,
                 PriceSwap = Math.Round((x.Price.Value * 0.01) + (Difference.SWAPPercSell * (x.Price.Value * 0.01)), 2),
-                PriceLoot = Math.Round((t.Price * 0.01) - (Difference.LOOTPerc * (t.Price * 0.01)), 2)
+                CountSwap = $"Have:{x.Stock.Have}/Max:{x.Stock.Max}",
+                PriceLoot = Math.Round((t.Price * 0.01) - (Difference.LOOTPerc * (t.Price * 0.01)), 2),
+                CountLoot = $"Have:{t.Have}/Max:{t.Max}"
             }).ToList();
 
-            dataGridView1.DataSource = l;
+            var k = l.Join(trade, a => a.Name, w => w.Name, (a, w) => new
+            {
+                Name = a.Name,
+                PriceSwap = a.PriceSwap,
+                CountSwap = a.CountSwap,
+                PriceLoot = a.PriceLoot,
+                CountLoot = a.CountLoot,
+                Tradeit_Price = w.Price,
+                Tradeit_Count = w.Count
+            }).ToList();
 
-            // TODO : 
-            var tradeit = Task.Run(() => GetJSONData.GetXHR(Links.TRADE_DOTA));
-            TradeIts = TradeIt.FromJson(tradeit.Result);
-
+            dataGridView1.DataSource = k;
         }
-
         private void btnCalc_Click(object sender, EventArgs e)
         {
             try

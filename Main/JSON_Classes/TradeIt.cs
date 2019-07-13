@@ -56,15 +56,19 @@ namespace Main
         [JsonProperty("d")]
         public List<Dd> Dd { get; set; }
 
-        [JsonProperty("m", NullValueHandling = NullValueHandling.Ignore)]
-        public M M { get; set; }
-
+        /*[JsonProperty("m", NullValueHandling = NullValueHandling.Ignore)]
+        public M M { get; set; }*/
+        /// <summary>
+        /// Price to bye
+        /// </summary>
         [JsonProperty("p")]
         public long P { get; set; }
 
         [JsonProperty("a")]
         public long A { get; set; }
-
+        /// <summary>
+        /// Count of items
+        /// </summary>
         [JsonProperty("x")]
         public long X { get; set; }
 
@@ -80,10 +84,10 @@ namespace Main
         [JsonProperty("i")]
         public string I { get; set; }
 
-        [JsonProperty("t", NullValueHandling = NullValueHandling.Ignore)]
-        public List<long> T { get; set; }
+        /*[JsonProperty("t", NullValueHandling = NullValueHandling.Ignore)]
+        public List<long> T { get; set; }*/
     }
-
+    /*
     public partial class M
     {
         [JsonProperty("p", NullValueHandling = NullValueHandling.Ignore)]
@@ -103,7 +107,7 @@ namespace Main
 
         [JsonProperty("h", NullValueHandling = NullValueHandling.Ignore)]
         public long? H { get; set; }
-    }
+    }*/
 
     public partial class TradeIt
     {
