@@ -51,18 +51,16 @@ namespace Main
         }
         private void MakeDataSource()
         {
-            var trade = tradeItCore.GetList().Select(x => new { Name = x.Item1, Count = x.Item2, Price = x.Item3 * 0.01 }).ToList();
-
             var l = swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
             {
                 Name = x.MarketName,
                 PriceSwap = Math.Round((x.Price.Value * 0.01) + (Difference.SWAPPercSell * (x.Price.Value * 0.01)), 2),
-                CountSwap = $"Have:{x.Stock.Have}/Max:{x.Stock.Max}",
+                HaveMaxS = $"{x.Stock.Have}/{x.Stock.Max}",
                 PriceLoot = Math.Round((t.Price * 0.01) - (Difference.LOOTPerc * (t.Price * 0.01)), 2),
-                CountLoot = $"Have:{t.Have}/Max:{t.Max}"
+                HaveMaxL = $"{t.Have}/{t.Max}"
             }).ToList();
 
-            var k = l.Join(trade, a => a.Name, w => w.Name, (a, w) => new
+            /*var k = l.Join(trade, a => a.Name, w => w.Name, (a, w) => new
             {
                 Name = a.Name,
                 PriceSwap = a.PriceSwap,
@@ -71,9 +69,8 @@ namespace Main
                 CountLoot = a.CountLoot,
                 Tradeit_Price = w.Price,
                 Tradeit_Count = w.Count
-            }).ToList();
-
-            dataGridView1.DataSource = k;
+            }).ToList();*/
+            dataGridView1.DataSource = l;
         }
         private void btnCalc_Click(object sender, EventArgs e)
         {
@@ -89,21 +86,56 @@ namespace Main
                     Have2 = t.Have,
                     Max2 = t.Max
                 })
-                .Where(x => comboBox1.SelectedIndex == 0 ? 
-                (x.Have1 > 0 && x.Have2 < x.Max2) : 
+                .Where(x => comboBox1.SelectedIndex == 0 ?
+                (x.Have1 > 0 && x.Have2 < x.Max2) :
                 (x.Have2 > 0 && x.Have1 < x.Max1))
-                .Select(x => new {
+                .Select(x => new
+                {
                     Name = x.Name,
                     Loot = x.PriceLoot,
                     Swap = x.PriceSwap,
-                    Perc = (comboBox1.SelectedIndex == 0 ? x.PriceLoot / x.PriceSwap : x.PriceSwap / x.PriceLoot) * 100 - 100
+                    Perc = (comboBox1.SelectedIndex == 0 ? x.PriceLoot / x.PriceSwap : x.PriceSwap / x.PriceLoot) * 100.0 - 100
                 })
                 .OrderByDescending(x => x.Perc).ToList();
-
-                dataGridView2.DataSource = l;
+                if (comboBox1.SelectedIndex == 2)
+                    {
+                    var k = tradeItCore.GetList().Where(x => x.Item2 > 0).Join(l, a => a.Item1, d => d.Name, (a, d) => new
+                    {
+                        Name = a.Item1,
+                        Loot = d.Loot + (d.Loot * Difference.LOOTPerc),
+                        Swap = d.Swap + (d.Swap * Difference.SWAPPercSell),
+                        Trade = a.Item3,
+                        PercSwap = Math.Round(d.Swap / a.Item3, 2) * 100.0 - 100,
+                        PercLoot = Math.Round(d.Loot / a.Item3, 2) * 100.0 - 100
+                    }).Where(x => x.Trade >= x. Loot || x.Trade >= x.Swap).OrderByDescending(x => x.Trade).Distinct().ToList();
+                    dataGridView2.DataSource = k;
+                }
+                else
+                {
+                    dataGridView2.DataSource = l;
+                }
                 dataGridView2.Update();
+                
             }
             catch (Exception) { }
+        }
+        private void SelectInTradeIt(string Name)
+        {
+            var trade = tradeItCore.GetList().Where(x => x.Item1 == Name).Select(x => new { Name = x.Item1, Max = x.Item2, Price = x.Item3 - (x.Item3 * Difference.TRADEPers) }).Distinct().OrderBy(x => x.Price).ToList();
+            dataGridView3.DataSource = trade;
+        }
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridView d = (DataGridView)sender;
+            if (e.RowIndex > 0)
+            {
+                if (e.ColumnIndex == 0)
+                {
+                    string val = d.Rows[e.RowIndex].Cells[0].Value.ToString();
+                    SelectInTradeIt(val);
+                    Clipboard.SetText(val);
+                }
+            }
         }
     }
 }

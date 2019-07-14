@@ -20,5 +20,9 @@ namespace Main.Support
         /// 0.03
         /// </summary>
         public const double LOOTPerc = 0.03;
+        /// <summary>
+        /// 0.03
+        /// </summary>
+        public const double TRADEPers = 0.03;
     }
 }

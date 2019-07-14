@@ -1,0 +1,262 @@
+﻿function formatDate(date)
+{
+    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds());
+}
+function pad(n)
+{
+    return (n < 10) ? ("0" + n) : n;
+}
+
+var price_rub = [23,24,40,41,43,44,62,77,78,84,94,114,117,118,137,148];
+var price_eur = [27,74];
+var price_cny = [29,31,38,39,86,87,88,89,121,122];
+
+var item_names = [];
+var game_id = 1;
+
+var checked_places = [];
+if(localStorage.getItem("checked_places") != null)
+{
+    checked_places = localStorage.getItem("checked_places").split(",");
+}
+
+function loadItemNames()
+{
+    $.ajax({
+        url: "ajax.php",
+        type: "POST",
+        data: {
+            act : "names"
+        },
+        beforeSend : function(){
+            NProgress.start();
+        },
+        success : function(data) {
+            item_names = [];
+            data = JSON.parse(data);
+            $.each(data, function(index, value) {
+                item_names[index + 1] = [];
+                $.each(value, function(index1, value1) {
+                    item_names[index + 1].push({id:index1,text:value1[0]});
+                });
+                item_names[index + 1].sort(function(a,b) {
+                    if(a.text < b.text) return -1;
+                    if(a.text > b.text) return 1;
+                    return 0;
+                });
+            });
+
+            var game_selector = $("#game");
+            var item_selector = $("#item");
+
+            game_selector.prop("disabled", false);
+            game_id = game_selector.val();
+            item_selector.select2({
+                width: '100%',
+                language: 'ru',
+                query: function (q) {
+                    var pageSize, results;
+
+                    pageSize = 20;
+                    var term = q.term.toLowerCase().replace(/[\(\)\|]/g, "").replace(/[\-]/g, " ").replace(/\s{2,}/g, " ").trim();
+                    results = item_names[game_id].filter(function (e) {
+                        e.text = e.text.toString();
+                        return (e.text != '' && (q.term === "" || e.text.toLowerCase().replace(/[\(\)\|]/g, "").replace(/[\-]/g, " ").replace(/\s{2,}/g, " ").trim().indexOf(term) >= 0));
+                    });
+
+                    q.callback({
+                        results: results.slice((q.page - 1) * pageSize, q.page * pageSize),
+                        more: results.length >= q.page * pageSize
+                    });
+                }
+            });
+            NProgress.done();
+        }
+    });
+}
+
+$(document).ready(function() {
+    game_id = $("#game").val();
+    $('#search').on("click", function(){
+        var item_id = $("#item").val();
+        if(item_id == "")
+        {
+            alert("Ошибка! Выберите предмет.");
+            return false;
+        }
+        var places = [];
+        $("input[name='market-places[]']:checked").each(function(index, value){
+            places.push($(value).val());
+        });
+        if(places.length == 0)
+        {
+            alert("Ошибка! Выберите хотя бы одну площадку.");
+            return false;
+        }
+        $.ajax({
+            url: "ajax.php",
+            type: "POST",
+            data: {
+                act : "prices",
+                game : game_id,
+                places : places,
+                item_id : item_id
+            },
+            beforeSend : function(){
+                NProgress.start();
+                $('#search').attr("disabled", true);
+            },
+            success : function(data) {
+                data = JSON.parse(data);
+                if(data.length > 0)
+                {
+                    $.each(data, function(index,value){
+                        if(value[0] != null)
+                        {
+                            if (price_rub.includes(value[2]))
+                                value[0] = value[0] / currencies['USD'];
+                            else if (price_eur.includes(value[2]))
+                                value[0] = value[0] * currencies['EUR'] / currencies['USD'];
+                            else if (price_cny.includes(value[2]))
+                                value[0] = value[0] / currencies['CNY'];
+                        }
+                    });
+                    data.sort(function(a,b) {
+                        if(a[0] < b[0]) return 1;
+                        if(a[0] > b[0]) return -1;
+                        return 0;
+                    });
+
+                    var content = '<tr>';
+                    $.each(data, function(index,value){
+                        if(value[0] != null)
+                        {
+                            var price_original = value[0] / 100;
+                            var price_discount;
+                            price_discount = price_original * (1 - sites[game_id][value[2]][1] / 100);
+
+                            var item_date = new Date(value[1] * 1000);
+                            content += '<td><a class="market-link" target="_blank" href="' + sites[game_id][value[2]][2] + '">' + sites[game_id][value[2]][0] + '</a></td><td>' + formatDate(item_date) + '</td><td><b class="block-price">' + (price_rub.includes(value[2]) || price_eur.includes(value[2]) || price_cny.includes(value[2]) ? '~' : '') + price_original.toFixed(2) + '$</b> <span class="block-price-old">(' + price_discount.toFixed(2) + '$)</span> ' + (value[3] == 1 ? "<div class='overstock' title='Предмет находится в статусе: Overstock'></div>" : "") + '</td></tr>';
+                        }
+                        else
+                        {
+                            content += '<td><a class="market-link" target="_blank" href="' + sites[game_id][value[2]][2] + '">' + sites[game_id][value[2]][0] + '</a></td><td>-</td><td>-</td></tr>';
+                        }
+                    });
+                    $("table.table tbody").html(content);
+                }
+                NProgress.done();
+                $('#search').attr("disabled", false);
+            }
+        });
+    });
+    $('#game').select2({
+        width: '100%',
+        minimumResultsForSearch: Infinity,
+        disabled: true,
+        language: 'ru'
+    }).on("change", function() {
+        game_id = $("#game").val();
+        $('#item').select2("val", "");
+        var places_content = '';
+        var all_checked = true;
+        $.each(site_list[game_id], function(index, value){
+            if(!checked_places.includes(value[1]))
+                all_checked = false;
+            places_content += '<label class="market-place-title" for="market-place-' + value[1] + '"><input id="market-place-' + value[1] + '" type="checkbox" name="market-places[]" value="' + value[1] + '"' + (checked_places.includes(value[1]) ? " checked" : "") + '>' + value[0] + "</label>";
+        });
+        places_content = '<label class="market-place-title" for="check-all"><input id="check-all" type="checkbox"' + (all_checked ? " checked" : "") + '>Выбрать все</label>' + places_content;
+        $("#market-places").html(places_content);
+
+        $('#check-all').on("change", function(e){
+            var elem = $(e.target);
+            var is_checked = elem.prop("checked");
+            $('input[name="market-places[]"]').prop("checked", is_checked);
+            if(is_checked)
+            {
+                $('input[name="market-places[]"]').each(function(index,value){
+                    var elem = $(value);
+                    if(checked_places.indexOf(elem.val()) == -1){
+                        checked_places.push(elem.val());
+                    }
+                });
+            }
+            else
+            {
+                $('input[name="market-places[]"]').each(function(index,value){
+                    var elem = $(value);
+                    if(checked_places.indexOf(elem.val()) != -1){
+                        checked_places.splice(checked_places.indexOf(elem.val()), 1);
+                    }
+                });
+            }
+            localStorage.setItem("checked_places", checked_places.join(','));
+        });
+
+        $('input[name="market-places[]"]').on("change", function(e){
+            var elem = $(e.target);
+            var is_checked = elem.prop("checked");
+            if(is_checked)
+            {
+                checked_places.push(elem.val());
+            }
+            else
+            {
+                checked_places.splice(checked_places.indexOf(elem.val()), 1);
+            }
+            $('#check-all').prop("checked", $('input[name="market-places[]"]').length == $('input[name="market-places[]"]:checked').length);
+            localStorage.setItem("checked_places", checked_places.join(','));
+        });
+    });
+    var places_content = '';
+    var all_checked = true;
+    $.each(site_list[game_id], function(index, value){
+        if(!checked_places.includes(value[1]))
+            all_checked = false;
+        places_content += '<label class="market-place-title" for="market-place-' + value[1] + '"><input id="market-place-' + value[1] + '" type="checkbox" name="market-places[]" value="' + value[1] + '"' + (checked_places.includes(value[1]) ? " checked" : "") + '>' + value[0] + "</label>";
+    });
+    places_content = '<label class="market-place-title" for="check-all"><input id="check-all" type="checkbox"' + (all_checked ? " checked" : "") + '>Выбрать все</label>' + places_content;
+    $("#market-places").html(places_content);
+
+    $('#check-all').on("change", function(e){
+        var elem = $(e.target);
+        var is_checked = elem.prop("checked");
+        $('input[name="market-places[]"]').prop("checked", is_checked);
+        if(is_checked)
+        {
+            $('input[name="market-places[]"]').each(function(index,value){
+                var elem = $(value);
+                if(checked_places.indexOf(elem.val()) == -1){
+                    checked_places.push(elem.val());
+                }
+            });
+        }
+        else
+        {
+            $('input[name="market-places[]"]').each(function(index,value){
+                var elem = $(value);
+                if(checked_places.indexOf(elem.val()) != -1){
+                    checked_places.splice(checked_places.indexOf(elem.val()), 1);
+                }
+            });
+        }
+        localStorage.setItem("checked_places", checked_places.join(','));
+    });
+
+    $('input[name="market-places[]"]').on("change", function(e){
+        var elem = $(e.target);
+        var is_checked = elem.prop("checked");
+        if(is_checked)
+        {
+            checked_places.push(elem.val());
+        }
+        else
+        {
+            checked_places.splice(checked_places.indexOf(elem.val()), 1);
+        }
+        $('#check-all').prop("checked", $('input[name="market-places[]"]').length == $('input[name="market-places[]"]:checked').length);
+        localStorage.setItem("checked_places", checked_places.join(','));
+    });
+
+    loadItemNames();
+});
