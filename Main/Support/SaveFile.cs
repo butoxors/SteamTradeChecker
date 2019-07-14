@@ -9,9 +9,9 @@ namespace Main.Support
 {
     public static class SaveFile
     {
-        public static Task ProcessWrite(string text)
+        public static Task ProcessWrite(string text, string name)
         {
-            string filePath = @"i:\file.txt";
+            string filePath = $"i:\\{name}.txt";
 
             return WriteTextAsync(filePath, text);
         }

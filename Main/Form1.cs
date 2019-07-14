@@ -34,6 +34,7 @@ namespace Main
         }
         private void btnCheck_Click(object sender, EventArgs e)
         {
+            //Ajax.MakeRequest();
             if (radioButton1.Checked)
             {
                 MakeRequest(Links.SWAP_DOTA, Links.LOOT_DOTA, Links.TRADE_DOTA);
