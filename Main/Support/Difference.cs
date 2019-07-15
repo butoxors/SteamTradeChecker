@@ -9,13 +9,13 @@ namespace Main.Support
     public static class Difference
     {
         /// <summary>
+        /// 0.12
+        /// </summary>
+        //public const double SWAPPercSell = 0.12;
+        /// <summary>
         /// 0.08
         /// </summary>
-        public const double SWAPPercSell = 0.08;
-        /// <summary>
-        /// 0.03
-        /// </summary>
-        public const double SWAPPercBuy = 0.03;
+        public const double SWAPPercBuy = 0.08;
         /// <summary>
         /// 0.03
         /// </summary>

@@ -30,7 +30,7 @@ namespace Main
             var res = Task.Run(() => GetJSONData.GetXHR(swap));
             swapItems = SwapItems.FromJson(res.Result);
             lootItems = LootItems.FromJson(GetJSONData.GetLootItems(loot));
-            tradeItCore = new TradeItBL(trade);
+            //tradeItCore = new TradeItBL(trade);
         }
         private void btnCheck_Click(object sender, EventArgs e)
         {
@@ -39,14 +39,14 @@ namespace Main
             {
                 MakeRequest(Links.SWAP_DOTA, Links.LOOT_DOTA, Links.TRADE_DOTA);
             }
-            /*else if (radioButton2.Checked)
+            else if (radioButton2.Checked)
             {
                 MakeRequest(Links.SWAP_RUST, Links.LOOT_RUST, "");
             }
             else
             {
                 MakeRequest(Links.SWAP_H1Z1, Links.LOOT_H1Z1, "");
-            }*/
+            }
 
             MakeDataSource();
         }
@@ -55,9 +55,9 @@ namespace Main
             var l = swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
             {
                 Name = x.MarketName,
-                PriceSwap = Math.Round((x.Price.Value * 0.01) + (Difference.SWAPPercSell * (x.Price.Value * 0.01)), 2),
+                PriceSwap = Math.Round((x.Price.Value * 0.01) + (Difference.SWAPPercBuy * (x.Price.Value * 0.01)), 2),
                 HaveMaxS = $"{x.Stock.Have}/{x.Stock.Max}",
-                PriceLoot = Math.Round((t.Price * 0.01) - (Difference.LOOTPerc * (t.Price * 0.01)), 2),
+                PriceLoot = Math.Round((t.Price * 0.01) + (Difference.LOOTPerc * (t.Price * 0.01)), 2),
                 HaveMaxL = $"{t.Have}/{t.Max}"
             }).ToList();
 
@@ -80,16 +80,16 @@ namespace Main
                 var l = swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
                 {
                     Name = x.MarketName,
-                    PriceSwap = Math.Round(comboBox1.SelectedIndex == 0 ? ((x.Price.Value * 0.01) + (Difference.SWAPPercSell * (x.Price.Value * 0.01))) : ((x.Price.Value * 0.01) + ((Difference.SWAPPercBuy) * (x.Price.Value * 0.01))), 2),
-                    PriceLoot = Math.Round(comboBox1.SelectedIndex == 1 ? ((t.Price * 0.01) + (Difference.LOOTPerc * (t.Price * 0.01))) : ((t.Price * 0.01) - (Difference.LOOTPerc * (t.Price * 0.01))), 2),
+                    PriceSwap = Math.Round(comboBox1.SelectedIndex == 0 ? ((x.Price.Value * 0.01) + (Difference.SWAPPercBuy * (x.Price.Value * 0.01))) : x.Price.Value * 0.01, 2),
+                    PriceLoot = Math.Round(comboBox1.SelectedIndex == 1 ? ((t.Price * 0.01) + (Difference.LOOTPerc * (t.Price * 0.01))) : ((t.Price * 0.01) - ((Difference.LOOTPerc + 0.03) * (t.Price * 0.01))), 2),
                     Have1 = x.Stock.Have,
                     Max1 = x.Stock.Max,
                     Have2 = t.Have,
                     Max2 = t.Max
                 })
                 .Where(x => comboBox1.SelectedIndex == 0 ?
-                (x.Have1 > 0 && x.Have2 < x.Max2) :
-                (x.Have2 > 0 && x.Have1 < x.Max1))
+                (x.Have1 > 0 && x.Have2 < x.Max2 && x.PriceSwap > 0.01) :
+                (x.Have2 > 0 && x.Have1 < x.Max1 && x.PriceLoot > 0.01))
                 .Select(x => new
                 {
                     Name = x.Name,
@@ -104,7 +104,7 @@ namespace Main
                     {
                         Name = a.Item1,
                         Loot = d.Loot + (d.Loot * Difference.LOOTPerc),
-                        Swap = d.Swap + (d.Swap * Difference.SWAPPercSell),
+                        Swap = d.Swap + (d.Swap * Difference.SWAPPercBuy),
                         Trade = a.Item3,
                         PercSwap = Math.Round(d.Swap / a.Item3, 2) * 100.0 - 100,
                         PercLoot = Math.Round(d.Loot / a.Item3, 2) * 100.0 - 100
@@ -122,13 +122,13 @@ namespace Main
         }
         private void SelectInTradeIt(string Name)
         {
-            var trade = tradeItCore.GetList().Where(x => x.Item1 == Name).Select(x => new { Name = x.Item1, Max = x.Item2, Price = x.Item3 - (x.Item3 * Difference.TRADEPers) }).Distinct().OrderBy(x => x.Price).ToList();
-            dataGridView3.DataSource = trade;
+            //var trade = tradeItCore.GetList().Where(x => x.Item1 == Name).Select(x => new { Name = x.Item1, Max = x.Item2, Price = x.Item3 - (x.Item3 * Difference.TRADEPers) }).Distinct().OrderBy(x => x.Price).ToList();
+            //dataGridView3.DataSource = trade;
         }
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             DataGridView d = (DataGridView)sender;
-            if (e.RowIndex > 0)
+            if (e.RowIndex >= 0)
             {
                 if (e.ColumnIndex == 0)
                 {
