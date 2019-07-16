@@ -48,6 +48,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Alert.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Alert.Designer.cs">
+      <DependentUpon>Alert.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BL\SwapBL.cs" />
     <Compile Include="BL\TradeItBL.cs" />
     <Compile Include="JSON_Classes\TradeIt.cs" />
     <Compile Include="Support\Ajax.cs" />
@@ -60,6 +67,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Support\DataSource.cs" />
     <Compile Include="Support\Difference.cs" />
     <Compile Include="Support\GetJSONData.cs" />
     <Compile Include="Support\Links.cs" />
@@ -68,6 +76,9 @@
     <Compile Include="JSON_Classes\LootItems.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Alert.resx">
+      <DependentUpon>Alert.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

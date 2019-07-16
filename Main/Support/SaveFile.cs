@@ -9,11 +9,11 @@ namespace Main.Support
 {
     public static class SaveFile
     {
-        public static Task ProcessWrite(string text, string name)
+        public static async void ProcessWrite(string text, string name)
         {
             string filePath = $"i:\\{name}.txt";
 
-            return WriteTextAsync(filePath, text);
+            await WriteTextAsync(filePath, text);
         }
 
         public static  async Task WriteTextAsync(string filePath, string text)

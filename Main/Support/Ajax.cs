@@ -19,7 +19,7 @@ namespace Main.Support
 
             var resp = await client.PostAsync("https://skins-table.xyz/prices/ajax.php", content);
             var repsStr = await resp.Content.ReadAsStringAsync();
-            await SaveFile.ProcessWrite(repsStr, "responce");
+            SaveFile.ProcessWrite(repsStr, "responce");
         }
     }
 }

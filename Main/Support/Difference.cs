@@ -15,7 +15,11 @@ namespace Main.Support
         /// <summary>
         /// 0.08
         /// </summary>
-        public const double SWAPPercBuy = 0.08;
+        public const double SWAP_DOTA_BUY = 0.08;
+        /// <summary>
+        /// 0.1 on H1Z1 and RUST
+        /// </summary>
+        public const double SWAP_OTHER_BUY = 0.1;
         /// <summary>
         /// 0.03
         /// </summary>
