@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Main.Support;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,24 +15,22 @@ namespace Main
 {
     public partial class Alert : Form
     {
+        private string text;
+
         public Alert(string t, Point l)
         {
+            InitializeComponent();
             this.Top = l.Y;
             this.Left = l.X;
-
-            InitializeComponent();
+            text = t;
             label1.Text = t;
         }
 
         private void Alert_Click(object sender, EventArgs e)
         {
-            using(Process proc = new Process())
-            {
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.FileName = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe";
-                proc.StartInfo.CreateNoWindow = true;
-                proc.Start();
-            }
+            Clipboard.SetText(text);
+            Process.Start(@"https://loot.farm/");
+            DataSource.Alerts.Remove(text);
             this.Close();
         }
     }

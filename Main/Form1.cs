@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Main.Support;
 using Main.BL;
+using System.Threading;
 
 namespace Main
 {
@@ -25,7 +26,8 @@ namespace Main
         public Form1()
         {
             InitializeComponent();
-            comboBox1.SelectedIndex = 0;
+            comboBox1.SelectedIndex = 1;
+            radioButton1.Checked = true;
             SwapBL = new SwapBL();
             TimerOn = false;
         }   
@@ -114,11 +116,13 @@ namespace Main
             {
                 timerAutoMode.Stop();
                 timerAutoMode.Enabled = false;
+                TimerOn = false;
             }
             else
             {
                 timerAutoMode.Enabled = true;
                 timerAutoMode.Start();
+                TimerOn = true;
             }
         }
 
@@ -127,6 +131,18 @@ namespace Main
             TimerOn = true;
             btnCheck.PerformClick();
             btnCalc.PerformClick();
+            foreach (var x in DataSource.Alerts)
+            {
+                Thread t = new Thread(new ThreadStart(ShowAlertForm));
+                t.Start();
+            }
+        }
+
+        private void ShowAlertForm()
+        {
+            int count = DataSource.Alerts.Count;
+            Alert a = new Alert(DataSource.Alerts.First(), new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width - 250, 50 * (count - DataSource.Alerts.Count) + 10));
+            a.Show();
         }
     }
 }

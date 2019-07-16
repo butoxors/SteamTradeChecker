@@ -10,6 +10,8 @@ namespace Main.Support
 {
     public static class DataSource
     {
+        public static List<string> Alerts = new List<string>();
+
         public static object GetDataSource(SwapBL Swap, List<LootItems> lootItems)
         {
             var l = Swap.swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
@@ -37,8 +39,8 @@ namespace Main.Support
                 Max2 = t.Max
             })
                 .Where(x => i == 0 ?
-                (x.Have1 > 0 && x.Have2 < x.Max2 && x.PriceSwap > 0.01) :
-                (x.Have2 > 0 && x.Have1 < x.Max1 && x.PriceLoot > 0.01))
+                (x.Have1 > 0 && x.Have2 < x.Max2 && x.PriceSwap > 0.01 && x.PriceSwap <= x.PriceLoot) :
+                (x.Have2 > 0 && x.Have1 < x.Max1 && x.PriceLoot > 0.01 && x.PriceSwap >= x.PriceLoot))
                 .Select(x => new
                 {
                     Name = x.Name,
@@ -65,7 +67,14 @@ namespace Main.Support
 
             if (MakeAlert)
             {
-                l.Where(a => a.Loot > a.Swap).Select((a, index) => new { Name = a.Name, index = index }).ToList().ForEach(a => new Alert(a.Name, new System.Drawing.Point(SystemInformation.VirtualScreen.Width - 250, 50 * (a.index + 1))).Show());
+                var s = l.Select(a => new { Name = a.Name}).ToList();
+                foreach (var x in s)
+                {
+                    if (!Alerts.Contains(x.Name))
+                    {
+                        Alerts.Add(x.Name);
+                    }
+                }
             }
 
             return l;
