@@ -1,16 +1,13 @@
 ﻿using Main.BL;
+using Main.JSON_Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Main.Support
 {
     public static class DataSource
     {
-        public static List<string> Alerts = new List<string>();
 
         public static object GetDataSource(SwapBL Swap, List<LootItems> lootItems)
         {
@@ -26,7 +23,7 @@ namespace Main.Support
             return l;
         }
 
-        public static object MakeTradeTable(bool MakeAlert, TradeItBL tradeItCore, SwapBL Swap, List<LootItems> lootItems, int i)
+        public static object MakeTradeTable(TradeItBL tradeItCore, SwapBL Swap, List<LootItems> lootItems, int i)
         {
             var l = Swap.swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
             {
@@ -40,7 +37,9 @@ namespace Main.Support
             })
                 .Where(x => i == 0 ?
                 (x.Have1 > 0 && x.Have2 < x.Max2 && x.PriceSwap > 0.01 && x.PriceSwap <= x.PriceLoot) :
-                (x.Have2 > 0 && x.Have1 < x.Max1 && x.PriceLoot > 0.01 && x.PriceSwap >= x.PriceLoot))
+                i == 1 ?
+                (x.Have2 > 0 && x.Have1 < x.Max1 && x.PriceLoot > 0.01 && x.PriceSwap >= x.PriceLoot):
+                (x.Have2 > 0 && x.Have1 < x.Max1 && x.PriceLoot > 0.01))
                 .Select(x => new
                 {
                     Name = x.Name,
@@ -50,31 +49,17 @@ namespace Main.Support
                 })
                 .OrderByDescending(x => x.Perc).ToList();
 
-            /*var k = tradeItCore.GetList().Where(x => x.Item2 > 0).Join(l, a => a.Item1, d => d.Name, (a, d) => new
+            var k = tradeItCore.res.Where(x => x.Item2 > 0).Join(l, a => a.Item1, d => d.Name, (a, d) => new
             {
                 Name = a.Item1,
-                Loot = d.Loot + (d.Loot * Difference.LOOTPerc),
-                Swap = d.Swap + (d.Swap * Swap.Comission),
+                Loot = d.Loot,
+                Swap = d.Swap,
                 Trade = a.Item3,
-                PercSwap = Math.Round(d.Swap / a.Item3, 2) * 100.0 - 100,
-                PercLoot = Math.Round(d.Loot / a.Item3, 2) * 100.0 - 100
-            }).Where(x => x.Trade >= x.Loot || x.Trade >= x.Swap).OrderByDescending(x => x.Trade).Distinct().ToList();
+            }).OrderByDescending(x => x.Trade).Distinct().ToList();
 
             if (i == 2)
             {
                 return k;
-            }*/
-
-            if (MakeAlert)
-            {
-                var s = l.Select(a => new { Name = a.Name}).ToList();
-                foreach (var x in s)
-                {
-                    if (!Alerts.Contains(x.Name))
-                    {
-                        Alerts.Add(x.Name);
-                    }
-                }
             }
 
             return l;

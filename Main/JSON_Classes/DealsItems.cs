@@ -6,7 +6,7 @@
 //
 //    var dealsItems = DealsItems.FromJson(jsonString);
 
-namespace Main
+namespace Main.JSON_Classes
 {
     using System;
     using System.Collections.Generic;

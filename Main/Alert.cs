@@ -17,11 +17,9 @@ namespace Main
     {
         private string text;
 
-        public Alert(string t, Point l)
+        public Alert(string t)
         {
             InitializeComponent();
-            this.Top = l.Y;
-            this.Left = l.X;
             text = t;
             label1.Text = t;
         }
@@ -30,8 +28,13 @@ namespace Main
         {
             Clipboard.SetText(text);
             Process.Start(@"https://loot.farm/");
-            DataSource.Alerts.Remove(text);
             this.Close();
+        }
+
+        private void Alert_Load(object sender, EventArgs e)
+        {
+            this.Top = 60;
+            this.Left = Screen.PrimaryScreen.Bounds.Width - this.Width - 50;
         }
     }
 }

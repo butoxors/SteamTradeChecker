@@ -56,7 +56,10 @@
     </Compile>
     <Compile Include="BL\SwapBL.cs" />
     <Compile Include="BL\TradeItBL.cs" />
-    <Compile Include="JSON_Classes\TradeIt.cs" />
+    <Compile Include="JSON_Classes\TradeIt\TradeIt.cs" />
+    <Compile Include="JSON_Classes\TradeIt\TradeItDota.cs" />
+    <Compile Include="JSON_Classes\TradeIt\TradeItH1Z1.cs" />
+    <Compile Include="JSON_Classes\TradeIt\TradeItRust.cs" />
     <Compile Include="Support\Ajax.cs" />
     <Compile Include="Support\Converter.cs" />
     <Compile Include="JSON_Classes\DealsItems.cs" />
@@ -109,5 +112,6 @@
   <ItemGroup>
     <Content Include="Table ajax.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
