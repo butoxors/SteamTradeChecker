@@ -9,6 +9,10 @@
         public static readonly string LOOT_RUST = "https://loot.farm/fullpriceRUST.json";
         public static readonly string LOOT_H1Z1 = "https://loot.farm/fullpriceH1Z1.json";
         public static readonly string LOOT_DOTA = "https://loot.farm/fullpriceDOTA.json";
+        public static readonly string LOOT_USER_RUST = "https://loot.farm/getInv_new.php?game=252490";
+        public static readonly string LOOT_USER_H1Z1 = "https://loot.farm/getInv_new.php?game=433850";
+        public static readonly string LOOT_USER_DOTA = @"https://loot.farm/getInv_new.php?game=570";
+        public static readonly string LOOT_ACCOUNT_URL = @"https://loot.farm/login_data.php";
 
         public static readonly string MONEY_DOTA = "https://dota.money/570/load_bots_inventory";
 

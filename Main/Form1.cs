@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Main.Support;
 using Main.BL;
-using System.Threading;
+using Main.JSON_Classes.LootFarm;
+using Main.JSON_Classes.DotaMoney;
 using Main.JSON_Classes;
 
 namespace Main
@@ -56,7 +54,10 @@ namespace Main
                 MakeRequest(Links.SWAP_H1Z1, Links.LOOT_H1Z1, Links.TRADE_H1Z1);
             }
 
-            dataGridView1.DataSource = DataSource.GetDataSource(SwapBL, lootItems);
+            var s = DataSource.GetDataSource(SwapBL, lootItems);
+
+            if (s != dataGridView1.DataSource)
+                dataGridView1.DataSource = s;
 
         }
 

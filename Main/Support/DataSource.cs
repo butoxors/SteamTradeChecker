@@ -1,5 +1,6 @@
 ﻿using Main.BL;
 using Main.JSON_Classes;
+using Main.JSON_Classes.LootFarm;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -6,7 +6,7 @@
 //
 //    var lootItems = LootItems.FromJson(jsonString);
 
-namespace Main.JSON_Classes
+namespace Main.JSON_Classes.LootFarm
 {
     using System.Collections.Generic;
     using Support;

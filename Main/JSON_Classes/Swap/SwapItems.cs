@@ -6,7 +6,7 @@
 //
 //    var itemInfo = ItemInfo.FromJson(jsonString);
 
-namespace Main.JSON_Classes
+namespace Main.JSON_Classes.Swap
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;

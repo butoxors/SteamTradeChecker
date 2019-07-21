@@ -1,4 +1,4 @@
-﻿using Main.JSON_Classes;
+﻿using Main.JSON_Classes.Swap;
 using Main.Support;
 using System;
 using System.Collections.Generic;

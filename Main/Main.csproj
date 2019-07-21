@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Main">
+      <HintPath>obj\Debug\Main.exe</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,6 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AccountControl.Designer.cs">
+      <DependentUpon>AccountControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Alert.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -56,14 +65,22 @@
     </Compile>
     <Compile Include="BL\SwapBL.cs" />
     <Compile Include="BL\TradeItBL.cs" />
+    <Compile Include="JSON_Classes\LootFarm\LootAccount.cs" />
+    <Compile Include="JSON_Classes\LootFarm\LootUserInventory.cs" />
     <Compile Include="JSON_Classes\TradeIt\TradeIt.cs" />
     <Compile Include="JSON_Classes\TradeIt\TradeItDota.cs" />
     <Compile Include="JSON_Classes\TradeIt\TradeItH1Z1.cs" />
     <Compile Include="JSON_Classes\TradeIt\TradeItRust.cs" />
+    <Compile Include="Form2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form2.Designer.cs">
+      <DependentUpon>Form2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Support\Ajax.cs" />
     <Compile Include="Support\Converter.cs" />
     <Compile Include="JSON_Classes\DealsItems.cs" />
-    <Compile Include="JSON_Classes\DotaMoney.cs" />
+    <Compile Include="JSON_Classes\DotaMoney\DotaMoney.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,16 +91,23 @@
     <Compile Include="Support\Difference.cs" />
     <Compile Include="Support\GetJSONData.cs" />
     <Compile Include="Support\Links.cs" />
+    <Compile Include="Support\ParseStringConverter.cs" />
     <Compile Include="Support\SaveFile.cs" />
-    <Compile Include="JSON_Classes\SwapItems.cs" />
-    <Compile Include="JSON_Classes\LootItems.cs" />
+    <Compile Include="JSON_Classes\Swap\SwapItems.cs" />
+    <Compile Include="JSON_Classes\LootFarm\LootItems.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AccountControl.resx">
+      <DependentUpon>AccountControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Alert.resx">
       <DependentUpon>Alert.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form2.resx">
+      <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -93,6 +117,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\DataSources\ItemInfo.datasource" />
     <None Include="Properties\DataSources\Result.datasource" />
@@ -110,6 +135,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\LootFarmLogo.png" />
     <Content Include="Table ajax.txt" />
   </ItemGroup>
   <ItemGroup />

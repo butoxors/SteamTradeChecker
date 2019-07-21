@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace Main
 {
-    public partial class Alert : Form
+    public partial class Alert : System.Windows.Forms.Form
     {
         private string text;
 

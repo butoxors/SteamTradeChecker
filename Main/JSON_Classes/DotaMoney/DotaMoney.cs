@@ -6,7 +6,7 @@
 //
 //    var dotaMoney = DotaMoney.FromJson(jsonString);
 
-namespace Main.JSON_Classes
+namespace Main.JSON_Classes.DotaMoney
 {
     using System;
     using System.Collections.Generic;
