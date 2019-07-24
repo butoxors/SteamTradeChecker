@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Main.BL;
+using Main.JSON_Classes;
+using Main.JSON_Classes.DotaMoney;
+using Main.JSON_Classes.LootFarm;
+using Main.Support;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Main.Support;
-using Main.BL;
-using Main.JSON_Classes.LootFarm;
-using Main.JSON_Classes.DotaMoney;
-using Main.JSON_Classes;
 
 namespace Main
 {
@@ -15,7 +15,7 @@ namespace Main
         DealsItems Deals = new DealsItems();
         SwapBL SwapBL;
         List<LootItems> lootItems = new List<LootItems>();
-        List<DotaMoney> DotaMoneyItems = new List<DotaMoney>();
+        List<DotaMoneyJson> DotaMoneyItems = new List<DotaMoneyJson>();
         //List<TradeIt> TradeIts = new List<TradeIt>();
 
         TradeItBL tradeItCore;
@@ -29,6 +29,7 @@ namespace Main
             radioButton1.Checked = true;
             SwapBL = new SwapBL();
             AutoMode = false;
+            
         }   
 
         private void MakeRequest(string swap, string loot, string trade)
@@ -65,9 +66,13 @@ namespace Main
         {
             try
             {
-                var l = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex);
+                List<Tuple<string, double, double, double>> l = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex);
 
                 dataGridView2.DataSource = l;
+                dataGridView2.Columns[0].HeaderText = "Name";
+                dataGridView2.Columns[1].HeaderText = "Loot";
+                dataGridView2.Columns[2].HeaderText = "Swap";
+                dataGridView2.Columns[3].HeaderText = comboBox1.SelectedIndex != 2 ? "Perc" : "Trade";
                 dataGridView2.Update();
             }
             catch (Exception x) { MessageBox.Show(x.Message); }
@@ -120,5 +125,26 @@ namespace Main
             }
         }
 
+        private void dataGridView2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            var r = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex);
+            switch (e.ColumnIndex)
+            {
+                case 0:
+                    r.Sort((x, y) => x.Item1.CompareTo(y.Item1));
+                    break;
+                case 1:
+                    r.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+                    break;
+                case 2:
+                    r.Sort((x, y) => y.Item3.CompareTo(x.Item3));
+                    break;
+                case 3:
+                    r.Sort((x, y) => y.Item4.CompareTo(x.Item4));
+                    break;
+            }
+
+            dataGridView2.DataSource = r;
+        }
     }
 }

@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Main">
-      <HintPath>obj\Debug\Main.exe</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -67,20 +64,14 @@
     <Compile Include="BL\TradeItBL.cs" />
     <Compile Include="JSON_Classes\LootFarm\LootAccount.cs" />
     <Compile Include="JSON_Classes\LootFarm\LootUserInventory.cs" />
-    <Compile Include="JSON_Classes\TradeIt\TradeIt.cs" />
+    <Compile Include="JSON_Classes\TradeIt\TradeItJson.cs" />
     <Compile Include="JSON_Classes\TradeIt\TradeItDota.cs" />
     <Compile Include="JSON_Classes\TradeIt\TradeItH1Z1.cs" />
     <Compile Include="JSON_Classes\TradeIt\TradeItRust.cs" />
-    <Compile Include="Form2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form2.Designer.cs">
-      <DependentUpon>Form2.cs</DependentUpon>
-    </Compile>
     <Compile Include="Support\Ajax.cs" />
     <Compile Include="Support\Converter.cs" />
     <Compile Include="JSON_Classes\DealsItems.cs" />
-    <Compile Include="JSON_Classes\DotaMoney\DotaMoney.cs" />
+    <Compile Include="JSON_Classes\DotaMoney\DotaMoneyJson.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,9 +96,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Form2.resx">
-      <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -135,9 +123,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\LootFarmLogo.png" />
     <Content Include="Table ajax.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

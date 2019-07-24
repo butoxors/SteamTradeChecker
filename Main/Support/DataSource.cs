@@ -9,7 +9,6 @@ namespace Main.Support
 {
     public static class DataSource
     {
-
         public static object GetDataSource(SwapBL Swap, List<LootItems> lootItems)
         {
             var l = Swap.swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
@@ -24,7 +23,7 @@ namespace Main.Support
             return l;
         }
 
-        public static object MakeTradeTable(TradeItBL tradeItCore, SwapBL Swap, List<LootItems> lootItems, int i)
+        public static List<Tuple<string, double, double, double>> MakeTradeTable(TradeItBL tradeItCore, SwapBL Swap, List<LootItems> lootItems, int i)
         {
             var l = Swap.swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
             {
@@ -57,13 +56,21 @@ namespace Main.Support
                 Swap = d.Swap,
                 Trade = a.Item3,
             }).OrderByDescending(x => x.Trade).Distinct().ToList();
-
+            List<Tuple<string, double, double, double>> w = new List<Tuple<string, double, double, double>>();
+            
             if (i == 2)
             {
-                return k;
+                foreach (var s in k)
+                {
+                    w.Add(Tuple.Create(s.Name, s.Loot, s.Swap, s.Trade));
+                }
+                return w;
             }
-
-            return l;
+            foreach (var s in l)
+            {
+                w.Add(Tuple.Create(s.Name, s.Loot, s.Swap, s.Perc));
+            }
+            return w;
         }
     }
 }
