@@ -22,7 +22,9 @@ namespace Main.Support
             try
             {
                 HttpResponseMessage response = await client.GetAsync(URL);
+
                 response.EnsureSuccessStatusCode();
+
                 return await response.Content.ReadAsStringAsync();
             }
             catch (HttpRequestException e) { return e.Message; }

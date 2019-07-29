@@ -5,6 +5,10 @@ using Main.JSON_Classes.LootFarm;
 using Main.Support;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Main
@@ -66,13 +70,20 @@ namespace Main
         {
             try
             {
-                List<Tuple<string, double, double, double>> l = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex);
+                if (tradeItCore == null || SwapBL == null || lootItems == null)
+                    btnCheck.PerformClick();
+
+                List<Tuple<string, double, double, double, long>> l = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex);
 
                 dataGridView2.DataSource = l;
                 dataGridView2.Columns[0].HeaderText = "Name";
                 dataGridView2.Columns[1].HeaderText = "Loot";
                 dataGridView2.Columns[2].HeaderText = "Swap";
                 dataGridView2.Columns[3].HeaderText = comboBox1.SelectedIndex != 2 ? "Perc" : "Trade";
+                dataGridView2.Columns[4].HeaderText = comboBox1.SelectedIndex != 0 ? "SwapCount" : "LootCount";
+
+                dataGridView2.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+
                 dataGridView2.Update();
             }
             catch (Exception x) { MessageBox.Show(x.Message); }
@@ -146,5 +157,50 @@ namespace Main
 
             dataGridView2.DataSource = r;
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string url = "https://loot.farm/login_data.php";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "POST";
+            request.Accept = "*/*";
+            request.KeepAlive = true;
+            request.Host = "loot.farm";
+
+            CookieContainer cookieContainer = new CookieContainer();
+            cookieContainer.Add(new Cookie("_ga", "GA1.2.363365182.1552735823") { Domain = request.Host });
+            cookieContainer.Add(new Cookie("_fbp", "fb.1.1558441183960.1908168188") { Domain = request.Host });
+            cookieContainer.Add(new Cookie("_gid", "GA1.2.380863218.1563038872") { Domain = request.Host });
+            cookieContainer.Add(new Cookie("noCancelScam", "1") { Domain = request.Host });
+            cookieContainer.Add(new Cookie("__tawkuuid", "e::loot.farm::yyDXu / 0fgsfBerohz6J87qNFs / DxaseqxdkdT5bpu4PQxl5U4q5DTwuz9roh4jZR::2") { Domain = request.Host });
+            cookieContainer.Add(new Cookie("lang", "ru") { Domain = request.Host });
+            cookieContainer.Add(new Cookie("currency", "USD") { Domain = request.Host });
+            cookieContainer.Add(new Cookie("PHPSESSID", "c6b4ad00551255440906928cad35b508") { Domain = request.Host });
+            //cookieContainer.Add(new Cookie(@"_gat_UA - 2579492 - 4", "1") { Domain = request.Host });
+            cookieContainer.Add(new Cookie("TawkConnectionTime", "0") { Domain = request.Host });
+
+            request.CookieContainer = cookieContainer;
+
+            #region COOKIE
+            /*_ga = GA1.2.363365182.1552735823;
+            _fbp = fb.1.1558441183960.1908168188;
+            _gid = GA1.2.380863218.1563038872;
+            noCancelScam = 1;
+            __tawkuuid = e::loot.farm::yyDXu / 0fgsfBerohz6J87qNFs / DxaseqxdkdT5bpu4PQxl5U4q5DTwuz9roh4jZR::2;
+            lang = ru;
+            currency = USD;
+            PHPSESSID = c6b4ad00551255440906928cad35b508;
+            _gat_UA - 2579492 - 4 = 1;
+            TawkConnectionTime = 0*/
+            #endregion
+
+            request.Referer = "https://loot.farm/ru/account.html";
+            request.Headers.Add("Accept-Encoding", "gzip, deflate, br");
+            request.Headers.Add("Accept-Language", "ru,en-US;q=0.9,en;q=0.8,uk;q=0.7");
+
+            WebResponse responce = request.GetResponse();
+
+        }
+
     }
 }
