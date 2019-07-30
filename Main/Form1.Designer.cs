@@ -40,6 +40,12 @@
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.timerAutoMode = new System.Windows.Forms.Timer(this.components);
+            this.lnFrom = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.from = new System.Windows.Forms.TextBox();
+            this.to = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -105,7 +111,7 @@
             // 
             this.radioButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(592, 41);
+            this.radioButton1.Location = new System.Drawing.Point(414, 12);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(48, 17);
             this.radioButton1.TabIndex = 5;
@@ -117,7 +123,7 @@
             // 
             this.radioButton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(592, 64);
+            this.radioButton2.Location = new System.Drawing.Point(468, 12);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(55, 17);
             this.radioButton2.TabIndex = 6;
@@ -129,7 +135,7 @@
             // 
             this.radioButton3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(592, 87);
+            this.radioButton3.Location = new System.Drawing.Point(529, 12);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(52, 17);
             this.radioButton3.TabIndex = 6;
@@ -169,7 +175,7 @@
             // 
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(508, 85);
+            this.checkBox1.Location = new System.Drawing.Point(587, 12);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(77, 17);
             this.checkBox1.TabIndex = 8;
@@ -182,11 +188,69 @@
             this.timerAutoMode.Interval = 10000;
             this.timerAutoMode.Tick += new System.EventHandler(this.timerAutoMode_Tick);
             // 
+            // lnFrom
+            // 
+            this.lnFrom.AutoSize = true;
+            this.lnFrom.Location = new System.Drawing.Point(432, 49);
+            this.lnFrom.Name = "lnFrom";
+            this.lnFrom.Size = new System.Drawing.Size(30, 13);
+            this.lnFrom.TabIndex = 10;
+            this.lnFrom.Text = "From";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(528, 49);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(20, 13);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "To";
+            // 
+            // from
+            // 
+            this.from.Location = new System.Drawing.Point(468, 46);
+            this.from.Name = "from";
+            this.from.Size = new System.Drawing.Size(27, 20);
+            this.from.TabIndex = 11;
+            this.from.Text = "0";
+            // 
+            // to
+            // 
+            this.to.Location = new System.Drawing.Point(554, 46);
+            this.to.Name = "to";
+            this.to.Size = new System.Drawing.Size(27, 20);
+            this.to.TabIndex = 11;
+            this.to.Text = "100";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(501, 49);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(15, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "%";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(587, 49);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(15, 13);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "%";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(812, 358);
+            this.Controls.Add(this.to);
+            this.Controls.Add(this.from);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lnFrom);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.radioButton3);
@@ -220,6 +284,12 @@
         public System.Windows.Forms.DataGridView dataGridView3;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Timer timerAutoMode;
+        private System.Windows.Forms.Label lnFrom;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox from;
+        private System.Windows.Forms.TextBox to;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }
 

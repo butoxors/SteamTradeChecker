@@ -70,10 +70,12 @@ namespace Main
         {
             try
             {
+                double fromP = Convert.ToDouble(from.Text);
+                double toP = Convert.ToDouble(to.Text);
                 if (tradeItCore == null || SwapBL == null || lootItems == null)
                     btnCheck.PerformClick();
 
-                List<Tuple<string, double, double, double, long>> l = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex);
+                List<Tuple<string, double, double, double, long>> l = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex, fromP, toP);
 
                 dataGridView2.DataSource = l;
                 dataGridView2.Columns[0].HeaderText = "Name";
@@ -138,24 +140,32 @@ namespace Main
 
         private void dataGridView2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            var r = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex);
-            switch (e.ColumnIndex)
+            try
             {
-                case 0:
-                    r.Sort((x, y) => x.Item1.CompareTo(y.Item1));
-                    break;
-                case 1:
-                    r.Sort((x, y) => y.Item2.CompareTo(x.Item2));
-                    break;
-                case 2:
-                    r.Sort((x, y) => y.Item3.CompareTo(x.Item3));
-                    break;
-                case 3:
-                    r.Sort((x, y) => y.Item4.CompareTo(x.Item4));
-                    break;
-            }
+                double fromP = Convert.ToDouble(from.Text);
+                double toP = Convert.ToDouble(to.Text);
+                var r = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex, fromP, toP);
+                switch (e.ColumnIndex)
+                {
+                    case 0:
+                        r.Sort((x, y) => x.Item1.CompareTo(y.Item1));
+                        break;
+                    case 1:
+                        r.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+                        break;
+                    case 2:
+                        r.Sort((x, y) => y.Item3.CompareTo(x.Item3));
+                        break;
+                    case 3:
+                        r.Sort((x, y) => y.Item4.CompareTo(x.Item4));
+                        break;
+                }
 
-            dataGridView2.DataSource = r;
+                dataGridView2.DataSource = r;
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)

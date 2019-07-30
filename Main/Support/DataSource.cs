@@ -23,7 +23,7 @@ namespace Main.Support
             return l;
         }
 
-        public static List<Tuple<string, double, double, double, long>> MakeTradeTable(TradeItBL tradeItCore, SwapBL Swap, List<LootItems> lootItems, int i)
+        public static List<Tuple<string, double, double, double, long>> MakeTradeTable(TradeItBL tradeItCore, SwapBL Swap, List<LootItems> lootItems, int i, double from, double to)
         {
             var l = Swap.swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
             {
@@ -32,14 +32,12 @@ namespace Main.Support
                 PriceLoot = Math.Round(i == 1 ? ((t.Price * 0.01) + (Difference.LOOTPerc * (t.Price * 0.01))) : ((t.Price * 0.01) - ((Difference.LOOTPerc + 0.03) * (t.Price * 0.01))), 2),
                 Have1 = x.Stock.Have,
                 Max1 = x.Stock.Max,
-                Have2 = t.Have,
-                Max2 = t.Max
+                Have2 = t.Have, //loot
+                Max2 = t.Max //loot
             })
                 .Where(x => i == 0 ?
-                (x.Have1 > 0 && x.Have2 < x.Max2 && x.PriceSwap > 0.01 && x.PriceSwap <= x.PriceLoot) :
-                i == 1 ?
-                (x.Have2 > 0 && x.Have1 < x.Max1 && x.PriceLoot > 0.01 && x.PriceSwap >= x.PriceLoot):
-                (x.Have2 > 0 && x.Have1 < x.Max1 && x.PriceLoot > 0.01))
+                (x.Have1 > 0 && x.Have2 < x.Max2) :
+                (x.Have2 > 0 && x.Have1 < x.Max1))
                 .Select(x => new
                 {
                     Name = x.Name,
@@ -48,7 +46,8 @@ namespace Main.Support
                     Perc = (i == 0 ? x.PriceLoot / x.PriceSwap : x.PriceSwap / x.PriceLoot) * 100.0 - 100,
                     SwapCount = x.Max1 - x.Have1,
                     LootCount = x.Max2 - x.Have2
-                })
+                }).
+                Where(x => x.Perc > from && x.Perc < to)
                 .OrderByDescending(x => x.Perc).ToList();
 
             var k = tradeItCore.res.Where(x => x.Item2 > 0).Join(l, a => a.Item1, d => d.Name, (a, d) => new
