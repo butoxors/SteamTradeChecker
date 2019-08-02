@@ -25,6 +25,7 @@ namespace Main.BL
             var h = TradeItH1Z1.FromJson(Responce.Result);
 
             if (link == Links.TRADE_DOTA)
+            {
                 foreach (var l in d)
                 {
                     foreach (var item in l.GameCode.Items)
@@ -32,6 +33,8 @@ namespace Main.BL
                         res.Add(Tuple.Create(new string(item.Key.SkipWhile(m => m != '_').Skip(1).ToArray()), item.Value.X, item.Value.P * 0.01));
                     }
                 }
+                SaveFile.ProcessWrite(Responce.Result, "tradeit");
+            }
             else if (link == Links.TRADE_RUST)
                 foreach (var l in r)
                 {

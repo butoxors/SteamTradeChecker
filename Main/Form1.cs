@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -33,18 +34,41 @@ namespace Main
             radioButton1.Checked = true;
             SwapBL = new SwapBL();
             AutoMode = false;
-            
-        }   
 
-        private void MakeRequest(string swap, string loot, string trade)
+        }
+
+        private async void MakeRequest(string swap, string loot, string trade)
         {
-            SwapBL.Start(swap);
-            lootItems = LootItems.FromJson(GetJSONData.GetLootItems(loot));
+            await Task.Run(() =>
+            {
+                SwapBL.Start(swap);
+            });
+            await Task.Run(() =>
+            {
+                lootItems = LootItems.FromJson(GetJSONData.GetLootItems(loot));
+            });
+            await Task.Run(() =>
+            {
+                tradeItCore = new TradeItBL(trade);
+            });
+            await Task.Run(() =>
+            {
+                var res = Task.Run(() => GetJSONData.GetXHR(Links.MONEY_DOTA));
+                SaveFile.ProcessWrite(res.Result, "dotamoney");
+                //DotaMoneyItems = DotaMoneyJson.FromJson(res.Result);
+            });
 
-            tradeItCore = new TradeItBL(trade);
+            Task.WaitAll();
+            await Task.Run(() =>
+            {
+                var s = DataSource.GetDataSource(SwapBL, lootItems);
+                if (s != dataGridView1.DataSource)
+                    BeginInvoke(new MethodInvoker(() => dataGridView1.DataSource = s));
+            });
         }
         private void btnCheck_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
             if (radioButton1.Checked)
             {
                 MakeRequest(Links.SWAP_DOTA, Links.LOOT_DOTA, Links.TRADE_DOTA);
@@ -58,12 +82,8 @@ namespace Main
             {
                 MakeRequest(Links.SWAP_H1Z1, Links.LOOT_H1Z1, Links.TRADE_H1Z1);
             }
-
-            var s = DataSource.GetDataSource(SwapBL, lootItems);
-
-            if (s != dataGridView1.DataSource)
-                dataGridView1.DataSource = s;
-
+            Task.WaitAll();
+            Cursor.Current = Cursors.Default;
         }
 
         private void btnCalc_Click(object sender, EventArgs e)
@@ -72,6 +92,7 @@ namespace Main
             {
                 double fromP = Convert.ToDouble(from.Text);
                 double toP = Convert.ToDouble(to.Text);
+
                 if (tradeItCore == null || SwapBL == null || lootItems == null)
                     btnCheck.PerformClick();
 
@@ -107,22 +128,6 @@ namespace Main
                     SelectInTradeIt(val);
                     Clipboard.SetText(val);
                 }
-            }
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (timerAutoMode.Enabled)
-            {
-                timerAutoMode.Stop();
-                timerAutoMode.Enabled = false;
-                AutoMode = false;
-            }
-            else
-            {
-                timerAutoMode.Enabled = true;
-                timerAutoMode.Start();
-                AutoMode = true;
             }
         }
 
@@ -162,55 +167,11 @@ namespace Main
                 }
 
                 dataGridView2.DataSource = r;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string url = "https://loot.farm/login_data.php";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-            request.Accept = "*/*";
-            request.KeepAlive = true;
-            request.Host = "loot.farm";
-
-            CookieContainer cookieContainer = new CookieContainer();
-            cookieContainer.Add(new Cookie("_ga", "GA1.2.363365182.1552735823") { Domain = request.Host });
-            cookieContainer.Add(new Cookie("_fbp", "fb.1.1558441183960.1908168188") { Domain = request.Host });
-            cookieContainer.Add(new Cookie("_gid", "GA1.2.380863218.1563038872") { Domain = request.Host });
-            cookieContainer.Add(new Cookie("noCancelScam", "1") { Domain = request.Host });
-            cookieContainer.Add(new Cookie("__tawkuuid", "e::loot.farm::yyDXu / 0fgsfBerohz6J87qNFs / DxaseqxdkdT5bpu4PQxl5U4q5DTwuz9roh4jZR::2") { Domain = request.Host });
-            cookieContainer.Add(new Cookie("lang", "ru") { Domain = request.Host });
-            cookieContainer.Add(new Cookie("currency", "USD") { Domain = request.Host });
-            cookieContainer.Add(new Cookie("PHPSESSID", "c6b4ad00551255440906928cad35b508") { Domain = request.Host });
-            //cookieContainer.Add(new Cookie(@"_gat_UA - 2579492 - 4", "1") { Domain = request.Host });
-            cookieContainer.Add(new Cookie("TawkConnectionTime", "0") { Domain = request.Host });
-
-            request.CookieContainer = cookieContainer;
-
-            #region COOKIE
-            /*_ga = GA1.2.363365182.1552735823;
-            _fbp = fb.1.1558441183960.1908168188;
-            _gid = GA1.2.380863218.1563038872;
-            noCancelScam = 1;
-            __tawkuuid = e::loot.farm::yyDXu / 0fgsfBerohz6J87qNFs / DxaseqxdkdT5bpu4PQxl5U4q5DTwuz9roh4jZR::2;
-            lang = ru;
-            currency = USD;
-            PHPSESSID = c6b4ad00551255440906928cad35b508;
-            _gat_UA - 2579492 - 4 = 1;
-            TawkConnectionTime = 0*/
-            #endregion
-
-            request.Referer = "https://loot.farm/ru/account.html";
-            request.Headers.Add("Accept-Encoding", "gzip, deflate, br");
-            request.Headers.Add("Accept-Language", "ru,en-US;q=0.9,en;q=0.8,uk;q=0.7");
-
-            WebResponse responce = request.GetResponse();
-
-        }
-
     }
 }

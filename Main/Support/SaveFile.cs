@@ -11,7 +11,7 @@ namespace Main.Support
     {
         public static async void ProcessWrite(string text, string name)
         {
-            string filePath = $"i:\\{name}.txt";
+            string filePath =  $"{Directory.GetCurrentDirectory()}{name}.txt";
 
             await WriteTextAsync(filePath, text);
         }
@@ -19,6 +19,9 @@ namespace Main.Support
         public static  async Task WriteTextAsync(string filePath, string text)
         {
             byte[] encodedText = Encoding.Unicode.GetBytes(text);
+
+            if (File.Exists(filePath))
+                File.Delete(filePath);
 
             using (FileStream sourceStream = new FileStream(filePath,
                 FileMode.Append, FileAccess.Write, FileShare.None,
