@@ -31,7 +31,6 @@
             this.lNick = new System.Windows.Forms.Label();
             this.lBalance = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.chItems = new System.Windows.Forms.CheckBox();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -64,25 +63,14 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.chItems);
             this.panel1.Controls.Add(this.btnRefresh);
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(550, 0);
+            this.panel1.Location = new System.Drawing.Point(723, 0);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(5, 5, 5, 0);
             this.panel1.Size = new System.Drawing.Size(100, 423);
             this.panel1.TabIndex = 3;
-            // 
-            // chItems
-            // 
-            this.chItems.AutoSize = true;
-            this.chItems.Location = new System.Drawing.Point(5, 149);
-            this.chItems.Name = "chItems";
-            this.chItems.Size = new System.Drawing.Size(75, 17);
-            this.chItems.TabIndex = 5;
-            this.chItems.Text = "Overstock";
-            this.chItems.UseVisualStyleBackColor = true;
             // 
             // btnRefresh
             // 
@@ -100,7 +88,7 @@
             this.btnRefresh.TabIndex = 4;
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = false;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_ClickAsync);
             // 
             // pictureBox1
             // 
@@ -117,9 +105,9 @@
             this.panel2.Controls.Add(this.lBalance);
             this.panel2.Controls.Add(this.lNick);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(423, 0);
+            this.panel2.Location = new System.Drawing.Point(450, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(127, 423);
+            this.panel2.Size = new System.Drawing.Size(273, 423);
             this.panel2.TabIndex = 4;
             // 
             // panel3
@@ -129,7 +117,7 @@
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
             this.panel3.Padding = new System.Windows.Forms.Padding(10);
-            this.panel3.Size = new System.Drawing.Size(423, 423);
+            this.panel3.Size = new System.Drawing.Size(450, 423);
             this.panel3.TabIndex = 5;
             // 
             // dataGridView1
@@ -141,7 +129,7 @@
             this.dataGridView1.Location = new System.Drawing.Point(10, 10);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(403, 403);
+            this.dataGridView1.Size = new System.Drawing.Size(430, 403);
             this.dataGridView1.TabIndex = 0;
             // 
             // AccountControl
@@ -153,7 +141,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "AccountControl";
-            this.Size = new System.Drawing.Size(650, 423);
+            this.Size = new System.Drawing.Size(823, 423);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -174,6 +162,5 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.CheckBox chItems;
     }
 }

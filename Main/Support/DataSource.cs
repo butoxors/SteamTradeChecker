@@ -50,7 +50,7 @@ namespace Main.Support
                 Where(x => x.Perc > from && x.Perc < to)
                 .OrderByDescending(x => x.Perc).ToList();
 
-            var k = tradeItCore.res.Where(x => x.Item2 > 0).Join(l, a => a.Item1, d => d.Name, (a, d) => new
+            /*var k = tradeItCore.res.Where(x => x.Item2 > 0).Join(l, a => a.Item1, d => d.Name, (a, d) => new
             {
                 Name = a.Item1,
                 Loot = d.Loot,
@@ -59,9 +59,9 @@ namespace Main.Support
                 SwapCount = d.SwapCount,
                 Trade = a.Item3
                 
-            }).OrderByDescending(x => x.Trade).Distinct().ToList();
+            }).OrderByDescending(x => x.Trade).Distinct().ToList();*/
             List<Tuple<string, double, double, double, long>> w = new List<Tuple<string, double, double, double, long>>();
-            
+            /*
             if (i == 2)
             {
                 foreach (var s in k)
@@ -69,7 +69,7 @@ namespace Main.Support
                     w.Add(Tuple.Create(s.Name, s.Loot, s.Swap, s.Trade, s.SwapCount));
                 }
                 return w;
-            }
+            }*/
             foreach (var s in l)
             {
                 if (i == 0)

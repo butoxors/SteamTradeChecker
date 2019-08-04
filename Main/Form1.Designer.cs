@@ -73,7 +73,7 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(441, 262);
+            this.dataGridView1.Size = new System.Drawing.Size(441, 67);
             this.dataGridView1.TabIndex = 3;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             // 
@@ -149,7 +149,8 @@
             this.comboBox1.Items.AddRange(new object[] {
             "SWAP",
             "LOOT",
-            "TRADE"});
+            "TRADE",
+            "DOTA.MONEY"});
             this.comboBox1.Location = new System.Drawing.Point(751, 85);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(125, 21);
@@ -163,12 +164,12 @@
             this.dataGridView3.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView3.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView3.Location = new System.Drawing.Point(12, 280);
+            this.dataGridView3.Location = new System.Drawing.Point(11, 85);
             this.dataGridView3.Name = "dataGridView3";
             this.dataGridView3.ReadOnly = true;
             this.dataGridView3.RowHeadersVisible = false;
             this.dataGridView3.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView3.Size = new System.Drawing.Size(440, 65);
+            this.dataGridView3.Size = new System.Drawing.Size(440, 261);
             this.dataGridView3.TabIndex = 3;
             // 
             // timerAutoMode

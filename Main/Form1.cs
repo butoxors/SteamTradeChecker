@@ -6,6 +6,7 @@ using Main.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -25,20 +26,18 @@ namespace Main
 
         TradeItBL tradeItCore;
 
-        private bool AutoMode;
-
         public Form1()
         {
             InitializeComponent();
             comboBox1.SelectedIndex = 1;
             radioButton1.Checked = true;
             SwapBL = new SwapBL();
-            AutoMode = false;
-
         }
 
-        private async void MakeRequest(string swap, string loot, string trade)
+        private async void MakeRequest(string swap, string loot)
         {
+            Cursor = Cursors.WaitCursor;
+
             await Task.Run(() =>
             {
                 SwapBL.Start(swap);
@@ -47,43 +46,45 @@ namespace Main
             {
                 lootItems = LootItems.FromJson(GetJSONData.GetLootItems(loot));
             });
-            await Task.Run(() =>
+            /*await Task.Run(() =>
             {
                 tradeItCore = new TradeItBL(trade);
-            });
-            await Task.Run(() =>
+            });*/
+            /*await Task.Run(() =>
             {
                 var res = Task.Run(() => GetJSONData.GetXHR(Links.MONEY_DOTA));
-                SaveFile.ProcessWrite(res.Result, "dotamoney");
-                //DotaMoneyItems = DotaMoneyJson.FromJson(res.Result);
-            });
+                //SaveFile.ProcessWrite(res.Result, "dotamoney");
+                DotaMoneyItems = DotaMoneyJson.FromJson(res.Result);
+                
+            });*/
 
             Task.WaitAll();
+
             await Task.Run(() =>
             {
                 var s = DataSource.GetDataSource(SwapBL, lootItems);
                 if (s != dataGridView1.DataSource)
                     BeginInvoke(new MethodInvoker(() => dataGridView1.DataSource = s));
+                
             });
+            Cursor = Cursors.Default;
         }
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
+
             if (radioButton1.Checked)
             {
-                MakeRequest(Links.SWAP_DOTA, Links.LOOT_DOTA, Links.TRADE_DOTA);
+                MakeRequest(Links.SWAP_DOTA, Links.LOOT_DOTA);
                 SwapBL.Comission = Difference.SWAP_DOTA_BUY;
             }
             else if (radioButton2.Checked)
             {
-                MakeRequest(Links.SWAP_RUST, Links.LOOT_RUST, Links.TRADE_RUST);
+                MakeRequest(Links.SWAP_RUST, Links.LOOT_RUST);
             }
             else
             {
-                MakeRequest(Links.SWAP_H1Z1, Links.LOOT_H1Z1, Links.TRADE_H1Z1);
+                MakeRequest(Links.SWAP_H1Z1, Links.LOOT_H1Z1);
             }
-            Task.WaitAll();
-            Cursor.Current = Cursors.Default;
         }
 
         private void btnCalc_Click(object sender, EventArgs e)
@@ -93,7 +94,7 @@ namespace Main
                 double fromP = Convert.ToDouble(from.Text);
                 double toP = Convert.ToDouble(to.Text);
 
-                if (tradeItCore == null || SwapBL == null || lootItems == null)
+                if (SwapBL == null || lootItems == null)
                     btnCheck.PerformClick();
 
                 List<Tuple<string, double, double, double, long>> l = DataSource.MakeTradeTable(tradeItCore, SwapBL, lootItems, comboBox1.SelectedIndex, fromP, toP);

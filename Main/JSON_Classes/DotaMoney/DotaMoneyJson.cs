@@ -2,16 +2,18 @@
 //
 // To parse this JSON data, add NuGet 'Newtonsoft.Json' then do:
 //
-//    using Main;
+//    using Main.JSON_Classes.DotaMoney;
 //
-//    var dotaMoney = DotaMoney.FromJson(jsonString);
+//    var dotaMoneyJson = DotaMoneyJson.FromJson(jsonString);
 
 namespace Main.JSON_Classes.DotaMoney
 {
     using System;
     using System.Collections.Generic;
-    using Support;
+
+    using System.Globalization;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
 
     public partial class DotaMoneyJson
     {
@@ -20,15 +22,9 @@ namespace Main.JSON_Classes.DotaMoney
 
         [JsonProperty("o")]
         public long O { get; set; }
-        //Price
+
         [JsonProperty("p")]
         public double P { get; set; }
-
-        [JsonProperty("g", NullValueHandling = NullValueHandling.Ignore)]
-        public List<List<G>> G { get; set; }
-
-        [JsonProperty("b", NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> B { get; set; }
 
         [JsonProperty("vi", NullValueHandling = NullValueHandling.Ignore)]
         public List<long> Vi { get; set; }
@@ -39,11 +35,8 @@ namespace Main.JSON_Classes.DotaMoney
         [JsonProperty("bi", NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Bi { get; set; }
 
-        [JsonProperty("s", NullValueHandling = NullValueHandling.Ignore)]
-        public List<List<Empty>> S { get; set; }
-
         [JsonProperty("ss", NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> Ss { get; set; }
+        public List<Ss> Ss { get; set; }
 
         [JsonProperty("ui", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(DecodeArrayConverter))]
@@ -55,29 +48,35 @@ namespace Main.JSON_Classes.DotaMoney
         [JsonProperty("pd", NullValueHandling = NullValueHandling.Ignore)]
         public double? Pd { get; set; }
 
+        [JsonProperty("b", NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> B { get; set; }
+
+        [JsonProperty("g", NullValueHandling = NullValueHandling.Ignore)]
+        public List<List<G>> G { get; set; }
+
         [JsonProperty("f", NullValueHandling = NullValueHandling.Ignore)]
         public List<D> F { get; set; }
-
-        [JsonProperty("d", NullValueHandling = NullValueHandling.Ignore)]
-        public List<D> D { get; set; }
 
         [JsonProperty("n", NullValueHandling = NullValueHandling.Ignore)]
         public List<D> N { get; set; }
 
-        [JsonProperty("ar", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Ar> Ar { get; set; }
+        [JsonProperty("d", NullValueHandling = NullValueHandling.Ignore)]
+        public List<D> D { get; set; }
+
+        [JsonProperty("t", NullValueHandling = NullValueHandling.Ignore)]
+        public T? T { get; set; }
+
+        [JsonProperty("i", NullValueHandling = NullValueHandling.Ignore)]
+        public IEnum? I { get; set; }
 
         [JsonProperty("j", NullValueHandling = NullValueHandling.Ignore)]
         public long? J { get; set; }
 
-        [JsonProperty("i", NullValueHandling = NullValueHandling.Ignore)]
-        public string I { get; set; }
+        [JsonProperty("s", NullValueHandling = NullValueHandling.Ignore)]
+        public List<List<Empty>> S { get; set; }
 
-        [JsonProperty("t", NullValueHandling = NullValueHandling.Ignore)]
-        public string T { get; set; }
-
-        [JsonProperty("re", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Re { get; set; }
+        [JsonProperty("ar", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Ar> Ar { get; set; }
 
         [JsonProperty("c", NullValueHandling = NullValueHandling.Ignore)]
         public string C { get; set; }
@@ -96,22 +95,16 @@ namespace Main.JSON_Classes.DotaMoney
         public double AddPrice { get; set; }
 
         [JsonProperty("reason")]
-        public string Reason { get; set; }
+        public Reason Reason { get; set; }
     }
 
     public partial class G
     {
-        [JsonProperty("i", NullValueHandling = NullValueHandling.Ignore)]
-        public string I { get; set; }
-
         [JsonProperty("n", NullValueHandling = NullValueHandling.Ignore)]
         public string N { get; set; }
 
-        [JsonProperty("t")]
-        public string T { get; set; }
-
-        [JsonProperty("o", NullValueHandling = NullValueHandling.Ignore)]
-        public long? O { get; set; }
+        [JsonProperty("t", NullValueHandling = NullValueHandling.Ignore)]
+        public T? T { get; set; }
 
         [JsonProperty("c", NullValueHandling = NullValueHandling.Ignore)]
         public string C { get; set; }
@@ -119,6 +112,12 @@ namespace Main.JSON_Classes.DotaMoney
         [JsonProperty("v", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? V { get; set; }
+
+        [JsonProperty("o", NullValueHandling = NullValueHandling.Ignore)]
+        public long? O { get; set; }
+
+        [JsonProperty("i", NullValueHandling = NullValueHandling.Ignore)]
+        public IUnion? I { get; set; }
     }
 
     public partial class Empty
@@ -133,6 +132,14 @@ namespace Main.JSON_Classes.DotaMoney
         public long? L { get; set; }
     }
 
+    public enum Reason { Gems, Styles };
+
+    public enum IEnum { Gvz, Pu1, Rwm, Rwn, Rwo, Rwp, Rwq, Rwr, Rws, Rwt, Rwu, Rwv, Rww, Rwy, Rze, SignAutograph77Eb3878121Ec884B4622A2F347A03018B3A8Cc6, SignAutographTi70E1Ba5F4D6238Bd4D0149Cc96F1Adad55420Ae6B };
+
+    public enum T { AutographRune, AutographRuneTi2015, AutographRuneTi2017, EffigyCommendationGem, EtherealGem, FoulfellShard, General, InscribedGem, KineticGem, PrismaticGem, RuneOfAbscession, RuneOfTheBladeformLegacy, RuneOfTheDuelistIndomitable, RuneOfTheForeseerSContract, RuneOfTheMagusCypher, RuneOfWolfTraining, SpectatorGem, Ti8Rune, VictoryPredictionGem };
+
+    public enum Ss { S };
+
     public partial struct D
     {
         public long? Integer;
@@ -143,14 +150,83 @@ namespace Main.JSON_Classes.DotaMoney
         public bool IsNull => Integer == null && String == null;
     }
 
-    public partial class DotaMoneyJson
+    public partial struct IUnion
     {
-        public static List<DotaMoneyJson> FromJson(string json) => JsonConvert.DeserializeObject<List<DotaMoneyJson>>(json, Converter.Settings);
+        public IEnum? Enum;
+        public Uri PurpleUri;
+
+        public static implicit operator IUnion(IEnum Enum) => new IUnion { Enum = Enum };
+        public static implicit operator IUnion(Uri PurpleUri) => new IUnion { PurpleUri = PurpleUri };
     }
 
-    public static class SerializeMoney
+    public partial class DotaMoneyJson
     {
-        public static string ToJson(this List<DotaMoneyJson> self) => JsonConvert.SerializeObject(self, Converter.Settings);
+        public static List<DotaMoneyJson> FromJson(string json) => JsonConvert.DeserializeObject<List<DotaMoneyJson>>(json, Main.JSON_Classes.DotaMoney.Converter.Settings);
+    }
+
+    public static class Serialize
+    {
+        public static string ToJson(this List<DotaMoneyJson> self) => JsonConvert.SerializeObject(self, Main.JSON_Classes.DotaMoney.Converter.Settings);
+    }
+
+    internal static class Converter
+    {
+        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+        {
+            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+            DateParseHandling = DateParseHandling.None,
+            Converters =
+            {
+                ReasonConverter.Singleton,
+                DConverter.Singleton,
+                IUnionConverter.Singleton,
+                IEnumConverter.Singleton,
+                TConverter.Singleton,
+                SsConverter.Singleton,
+                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
+            },
+        };
+    }
+
+    internal class ReasonConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(Reason) || t == typeof(Reason?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "gems":
+                    return Reason.Gems;
+                case "styles":
+                    return Reason.Styles;
+            }
+            throw new Exception("Cannot unmarshal type Reason");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (Reason)untypedValue;
+            switch (value)
+            {
+                case Reason.Gems:
+                    serializer.Serialize(writer, "gems");
+                    return;
+                case Reason.Styles:
+                    serializer.Serialize(writer, "styles");
+                    return;
+            }
+            throw new Exception("Cannot marshal type Reason");
+        }
+
+        public static readonly ReasonConverter Singleton = new ReasonConverter();
     }
 
     internal class DConverter : JsonConverter
@@ -198,7 +274,379 @@ namespace Main.JSON_Classes.DotaMoney
         public static readonly DConverter Singleton = new DConverter();
     }
 
-    internal class ParseStringConverterMoney : JsonConverter
+    internal class IUnionConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(IUnion) || t == typeof(IUnion?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            switch (reader.TokenType)
+            {
+                case JsonToken.String:
+                case JsonToken.Date:
+                    var stringValue = serializer.Deserialize<string>(reader);
+                    switch (stringValue)
+                    {
+                        case "gvz":
+                            return new IUnion { Enum = IEnum.Gvz };
+                        case "pu1":
+                            return new IUnion { Enum = IEnum.Pu1 };
+                        case "rwm":
+                            return new IUnion { Enum = IEnum.Rwm };
+                        case "rwn":
+                            return new IUnion { Enum = IEnum.Rwn };
+                        case "rwo":
+                            return new IUnion { Enum = IEnum.Rwo };
+                        case "rwp":
+                            return new IUnion { Enum = IEnum.Rwp };
+                        case "rwq":
+                            return new IUnion { Enum = IEnum.Rwq };
+                        case "rwr":
+                            return new IUnion { Enum = IEnum.Rwr };
+                        case "rws":
+                            return new IUnion { Enum = IEnum.Rws };
+                        case "rwt":
+                            return new IUnion { Enum = IEnum.Rwt };
+                        case "rwu":
+                            return new IUnion { Enum = IEnum.Rwu };
+                        case "rwv":
+                            return new IUnion { Enum = IEnum.Rwv };
+                        case "rww":
+                            return new IUnion { Enum = IEnum.Rww };
+                        case "rwy":
+                            return new IUnion { Enum = IEnum.Rwy };
+                        case "rze":
+                            return new IUnion { Enum = IEnum.Rze };
+                        case "sign_autograph.77eb3878121ec884b4622a2f347a03018b3a8cc6":
+                            return new IUnion { Enum = IEnum.SignAutograph77Eb3878121Ec884B4622A2F347A03018B3A8Cc6 };
+                        case "sign_autograph_ti7.0e1ba5f4d6238bd4d0149cc96f1adad55420ae6b":
+                            return new IUnion { Enum = IEnum.SignAutographTi70E1Ba5F4D6238Bd4D0149Cc96F1Adad55420Ae6B };
+                    }
+                    try
+                    {
+                        var uri = new Uri(stringValue);
+                        return new IUnion { PurpleUri = uri };
+                    }
+                    catch (UriFormatException) { }
+                    break;
+            }
+            throw new Exception("Cannot unmarshal type IUnion");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            var value = (IUnion)untypedValue;
+            if (value.Enum != null)
+            {
+                switch (value.Enum)
+                {
+                    case IEnum.Gvz:
+                        serializer.Serialize(writer, "gvz");
+                        return;
+                    case IEnum.Pu1:
+                        serializer.Serialize(writer, "pu1");
+                        return;
+                    case IEnum.Rwm:
+                        serializer.Serialize(writer, "rwm");
+                        return;
+                    case IEnum.Rwn:
+                        serializer.Serialize(writer, "rwn");
+                        return;
+                    case IEnum.Rwo:
+                        serializer.Serialize(writer, "rwo");
+                        return;
+                    case IEnum.Rwp:
+                        serializer.Serialize(writer, "rwp");
+                        return;
+                    case IEnum.Rwq:
+                        serializer.Serialize(writer, "rwq");
+                        return;
+                    case IEnum.Rwr:
+                        serializer.Serialize(writer, "rwr");
+                        return;
+                    case IEnum.Rws:
+                        serializer.Serialize(writer, "rws");
+                        return;
+                    case IEnum.Rwt:
+                        serializer.Serialize(writer, "rwt");
+                        return;
+                    case IEnum.Rwu:
+                        serializer.Serialize(writer, "rwu");
+                        return;
+                    case IEnum.Rwv:
+                        serializer.Serialize(writer, "rwv");
+                        return;
+                    case IEnum.Rww:
+                        serializer.Serialize(writer, "rww");
+                        return;
+                    case IEnum.Rwy:
+                        serializer.Serialize(writer, "rwy");
+                        return;
+                    case IEnum.Rze:
+                        serializer.Serialize(writer, "rze");
+                        return;
+                    case IEnum.SignAutograph77Eb3878121Ec884B4622A2F347A03018B3A8Cc6:
+                        serializer.Serialize(writer, "sign_autograph.77eb3878121ec884b4622a2f347a03018b3a8cc6");
+                        return;
+                    case IEnum.SignAutographTi70E1Ba5F4D6238Bd4D0149Cc96F1Adad55420Ae6B:
+                        serializer.Serialize(writer, "sign_autograph_ti7.0e1ba5f4d6238bd4d0149cc96f1adad55420ae6b");
+                        return;
+                }
+            }
+            if (value.PurpleUri != null)
+            {
+                serializer.Serialize(writer, value.PurpleUri.ToString());
+                return;
+            }
+            throw new Exception("Cannot marshal type IUnion");
+        }
+
+        public static readonly IUnionConverter Singleton = new IUnionConverter();
+    }
+
+    internal class IEnumConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(IEnum) || t == typeof(IEnum?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "gvz":
+                    return IEnum.Gvz;
+                case "pu1":
+                    return IEnum.Pu1;
+                case "rwm":
+                    return IEnum.Rwm;
+                case "rwn":
+                    return IEnum.Rwn;
+                case "rwo":
+                    return IEnum.Rwo;
+                case "rwp":
+                    return IEnum.Rwp;
+                case "rwq":
+                    return IEnum.Rwq;
+                case "rwr":
+                    return IEnum.Rwr;
+                case "rws":
+                    return IEnum.Rws;
+                case "rwt":
+                    return IEnum.Rwt;
+                case "rwu":
+                    return IEnum.Rwu;
+                case "rwv":
+                    return IEnum.Rwv;
+                case "rww":
+                    return IEnum.Rww;
+                case "rwy":
+                    return IEnum.Rwy;
+                case "rze":
+                    return IEnum.Rze;
+                case "sign_autograph.77eb3878121ec884b4622a2f347a03018b3a8cc6":
+                    return IEnum.SignAutograph77Eb3878121Ec884B4622A2F347A03018B3A8Cc6;
+                case "sign_autograph_ti7.0e1ba5f4d6238bd4d0149cc96f1adad55420ae6b":
+                    return IEnum.SignAutographTi70E1Ba5F4D6238Bd4D0149Cc96F1Adad55420Ae6B;
+            }
+            throw new Exception("Cannot unmarshal type IEnum");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (IEnum)untypedValue;
+            switch (value)
+            {
+                case IEnum.Gvz:
+                    serializer.Serialize(writer, "gvz");
+                    return;
+                case IEnum.Pu1:
+                    serializer.Serialize(writer, "pu1");
+                    return;
+                case IEnum.Rwm:
+                    serializer.Serialize(writer, "rwm");
+                    return;
+                case IEnum.Rwn:
+                    serializer.Serialize(writer, "rwn");
+                    return;
+                case IEnum.Rwo:
+                    serializer.Serialize(writer, "rwo");
+                    return;
+                case IEnum.Rwp:
+                    serializer.Serialize(writer, "rwp");
+                    return;
+                case IEnum.Rwq:
+                    serializer.Serialize(writer, "rwq");
+                    return;
+                case IEnum.Rwr:
+                    serializer.Serialize(writer, "rwr");
+                    return;
+                case IEnum.Rws:
+                    serializer.Serialize(writer, "rws");
+                    return;
+                case IEnum.Rwt:
+                    serializer.Serialize(writer, "rwt");
+                    return;
+                case IEnum.Rwu:
+                    serializer.Serialize(writer, "rwu");
+                    return;
+                case IEnum.Rwv:
+                    serializer.Serialize(writer, "rwv");
+                    return;
+                case IEnum.Rww:
+                    serializer.Serialize(writer, "rww");
+                    return;
+                case IEnum.Rwy:
+                    serializer.Serialize(writer, "rwy");
+                    return;
+                case IEnum.Rze:
+                    serializer.Serialize(writer, "rze");
+                    return;
+                case IEnum.SignAutograph77Eb3878121Ec884B4622A2F347A03018B3A8Cc6:
+                    serializer.Serialize(writer, "sign_autograph.77eb3878121ec884b4622a2f347a03018b3a8cc6");
+                    return;
+                case IEnum.SignAutographTi70E1Ba5F4D6238Bd4D0149Cc96F1Adad55420Ae6B:
+                    serializer.Serialize(writer, "sign_autograph_ti7.0e1ba5f4d6238bd4d0149cc96f1adad55420ae6b");
+                    return;
+            }
+            throw new Exception("Cannot marshal type IEnum");
+        }
+
+        public static readonly IEnumConverter Singleton = new IEnumConverter();
+    }
+
+    internal class TConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(T) || t == typeof(T?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "Autograph Rune":
+                    return T.AutographRune;
+                case "Autograph Rune TI - 2015":
+                    return T.AutographRuneTi2015;
+                case "Autograph Rune TI - 2017":
+                    return T.AutographRuneTi2017;
+                case "Effigy Commendation Gem":
+                    return T.EffigyCommendationGem;
+                case "Ethereal Gem":
+                    return T.EtherealGem;
+                case "Foulfell Shard":
+                    return T.FoulfellShard;
+                case "General":
+                    return T.General;
+                case "Inscribed Gem":
+                    return T.InscribedGem;
+                case "Kinetic Gem":
+                    return T.KineticGem;
+                case "Prismatic Gem":
+                    return T.PrismaticGem;
+                case "Rune Of Abscession":
+                    return T.RuneOfAbscession;
+                case "Rune of Wolf Training":
+                    return T.RuneOfWolfTraining;
+                case "Rune of the Bladeform Legacy":
+                    return T.RuneOfTheBladeformLegacy;
+                case "Rune of the Duelist Indomitable":
+                    return T.RuneOfTheDuelistIndomitable;
+                case "Rune of the Foreseer's Contract":
+                    return T.RuneOfTheForeseerSContract;
+                case "Rune of the Magus Cypher":
+                    return T.RuneOfTheMagusCypher;
+                case "Spectator Gem":
+                    return T.SpectatorGem;
+                case "TI8 Rune":
+                    return T.Ti8Rune;
+                case "Victory Prediction Gem":
+                    return T.VictoryPredictionGem;
+            }
+            throw new Exception("Cannot unmarshal type T");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (T)untypedValue;
+            switch (value)
+            {
+                case T.AutographRune:
+                    serializer.Serialize(writer, "Autograph Rune");
+                    return;
+                case T.AutographRuneTi2015:
+                    serializer.Serialize(writer, "Autograph Rune TI - 2015");
+                    return;
+                case T.AutographRuneTi2017:
+                    serializer.Serialize(writer, "Autograph Rune TI - 2017");
+                    return;
+                case T.EffigyCommendationGem:
+                    serializer.Serialize(writer, "Effigy Commendation Gem");
+                    return;
+                case T.EtherealGem:
+                    serializer.Serialize(writer, "Ethereal Gem");
+                    return;
+                case T.FoulfellShard:
+                    serializer.Serialize(writer, "Foulfell Shard");
+                    return;
+                case T.General:
+                    serializer.Serialize(writer, "General");
+                    return;
+                case T.InscribedGem:
+                    serializer.Serialize(writer, "Inscribed Gem");
+                    return;
+                case T.KineticGem:
+                    serializer.Serialize(writer, "Kinetic Gem");
+                    return;
+                case T.PrismaticGem:
+                    serializer.Serialize(writer, "Prismatic Gem");
+                    return;
+                case T.RuneOfAbscession:
+                    serializer.Serialize(writer, "Rune Of Abscession");
+                    return;
+                case T.RuneOfWolfTraining:
+                    serializer.Serialize(writer, "Rune of Wolf Training");
+                    return;
+                case T.RuneOfTheBladeformLegacy:
+                    serializer.Serialize(writer, "Rune of the Bladeform Legacy");
+                    return;
+                case T.RuneOfTheDuelistIndomitable:
+                    serializer.Serialize(writer, "Rune of the Duelist Indomitable");
+                    return;
+                case T.RuneOfTheForeseerSContract:
+                    serializer.Serialize(writer, "Rune of the Foreseer's Contract");
+                    return;
+                case T.RuneOfTheMagusCypher:
+                    serializer.Serialize(writer, "Rune of the Magus Cypher");
+                    return;
+                case T.SpectatorGem:
+                    serializer.Serialize(writer, "Spectator Gem");
+                    return;
+                case T.Ti8Rune:
+                    serializer.Serialize(writer, "TI8 Rune");
+                    return;
+                case T.VictoryPredictionGem:
+                    serializer.Serialize(writer, "Victory Prediction Gem");
+                    return;
+            }
+            throw new Exception("Cannot marshal type T");
+        }
+
+        public static readonly TConverter Singleton = new TConverter();
+    }
+
+    internal class ParseStringConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(long) || t == typeof(long?);
 
@@ -227,6 +675,40 @@ namespace Main.JSON_Classes.DotaMoney
         }
 
         public static readonly ParseStringConverter Singleton = new ParseStringConverter();
+    }
+
+    internal class SsConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(Ss) || t == typeof(Ss?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            if (value == "s")
+            {
+                return Ss.S;
+            }
+            throw new Exception("Cannot unmarshal type Ss");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (Ss)untypedValue;
+            if (value == Ss.S)
+            {
+                serializer.Serialize(writer, "s");
+                return;
+            }
+            throw new Exception("Cannot marshal type Ss");
+        }
+
+        public static readonly SsConverter Singleton = new SsConverter();
     }
 
     internal class DecodeArrayConverter : JsonConverter
