@@ -5,6 +5,7 @@
         public static readonly string SWAP_RUST = "https://api.swap.gg/prices/252490";
         public static readonly string SWAP_H1Z1 = "https://api.swap.gg/prices/433850";
         public static readonly string SWAP_DOTA = "https://api.swap.gg/prices/570";
+        public static readonly string SWAP_BALANCE = "https://api.swap.gg/user/balance";
 
         public static readonly string LOOT_RUST = "https://loot.farm/fullpriceRUST.json";
         public static readonly string LOOT_H1Z1 = "https://loot.farm/fullpriceH1Z1.json";

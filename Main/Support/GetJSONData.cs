@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -28,6 +29,22 @@ namespace Main.Support
                 return await response.Content.ReadAsStringAsync();
             }
             catch (HttpRequestException e) { return e.Message; }
+        }
+        public static async Task<string> MakeCookieRequest(string site, string URL, Config cfg)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                using (HttpClient http = new HttpClient(handler))
+                {
+                    http.DefaultRequestHeaders.Add("X-Answer", "42");
+
+                    handler.CookieContainer = cfg.GenerateCookieContainer(site);
+
+                    string html = await http.GetStringAsync(URL);
+                    return html;
+                }
+            }
         }
         /// <summary>
         /// Download JSON file from URL

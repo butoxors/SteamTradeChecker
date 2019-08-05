@@ -24,5 +24,6 @@ namespace Main.BL
             var res = Task.Run(() => GetJSONData.GetXHR(link));
             swapItems = SwapItems.FromJson(res.Result);
         }
+
     }
 }

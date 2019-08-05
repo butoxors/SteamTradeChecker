@@ -2,6 +2,7 @@
 using Main.JSON_Classes;
 using Main.JSON_Classes.DotaMoney;
 using Main.JSON_Classes.LootFarm;
+using Main.JSON_Classes.Swap;
 using Main.Support;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,10 @@ namespace Main
     {
 
         DealsItems Deals = new DealsItems();
-        SwapBL SwapBL;
+        SwapBL SwapBL = new SwapBL();
         List<LootItems> lootItems = new List<LootItems>();
         List<DotaMoneyJson> DotaMoneyItems = new List<DotaMoneyJson>();
-        //List<TradeIt> TradeIts = new List<TradeIt>();
-
+        Config cfg;
         TradeItBL tradeItCore;
 
         public Form1()
@@ -31,7 +31,23 @@ namespace Main
             InitializeComponent();
             comboBox1.SelectedIndex = 1;
             radioButton1.Checked = true;
-            SwapBL = new SwapBL();
+            cfg = new Config();
+
+            //SetBalance();
+        }
+        /// <summary>
+        /// TODO:
+        /// </summary>
+        private async void SetBalance()
+        {
+            await Task.Run(() =>
+            {
+                var sbalance = Task.Run(() => GetJSONData.MakeCookieRequest("swap", Links.SWAP_BALANCE, cfg));
+                toolStripStatusLabel3.Text = $"Swap.gg balance: {SwapBalance.FromJson(sbalance.Result).Result * 0.01}";
+
+                var lbalance = Task.Run(() => GetJSONData.MakeCookieRequest("loot", Links.LOOT_ACCOUNT_URL, cfg));
+                toolStripStatusLabel4.Text = $"Loot.farm balance: {LootAccount.FromJson(lbalance.Result).Balance * 0.01}";
+            });
         }
 
         private async void MakeRequest(string swap, string loot)
@@ -45,12 +61,12 @@ namespace Main
             await Task.Run(() =>
             {
                 lootItems = LootItems.FromJson(GetJSONData.GetLootItems(loot));
-            });
-            /*await Task.Run(() =>
+            });/*
+            await Task.Run(() =>
             {
                 tradeItCore = new TradeItBL(trade);
-            });*/
-            /*await Task.Run(() =>
+            });
+            await Task.Run(() =>
             {
                 var res = Task.Run(() => GetJSONData.GetXHR(Links.MONEY_DOTA));
                 //SaveFile.ProcessWrite(res.Result, "dotamoney");
@@ -59,7 +75,8 @@ namespace Main
             });*/
 
             Task.WaitAll();
-
+            toolStripStatusLabel1.Text = "Swap.gg total item: " + SwapBL.swapItems.Result.Count;
+            toolStripStatusLabel2.Text = "Loot.farm total item: " + lootItems.Count;
             await Task.Run(() =>
             {
                 var s = DataSource.GetDataSource(SwapBL, lootItems);
@@ -68,10 +85,10 @@ namespace Main
                 
             });
             Cursor = Cursors.Default;
+
         }
         private void btnCheck_Click(object sender, EventArgs e)
         {
-
             if (radioButton1.Checked)
             {
                 MakeRequest(Links.SWAP_DOTA, Links.LOOT_DOTA);
@@ -129,18 +146,6 @@ namespace Main
                     SelectInTradeIt(val);
                     Clipboard.SetText(val);
                 }
-            }
-        }
-
-        private void timerAutoMode_Tick(object sender, EventArgs e)
-        {
-            Alert a = new Alert("Good news!");
-
-            btnCheck.PerformClick();
-            btnCalc.PerformClick();
-            if (dataGridView2.Rows.Count != 0 && a.WindowState != FormWindowState.Normal)
-            {
-                a.Show();
             }
         }
 
