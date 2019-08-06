@@ -23,7 +23,7 @@ namespace Main.Support
             return l;
         }
 
-        public static List<Tuple<string, double, double, double, long>> MakeTradeTable(TradeItBL tradeItCore, SwapBL Swap, List<LootItems> lootItems, int i, double from, double to)
+        public static List<Tuple<string, double, double, double, long>> MakeTradeTable(SwapBL Swap, List<LootItems> lootItems, int i, double from, double to, TradeItBL tradeItCore = null)
         {
             var l = Swap.swapItems.Result.Join(lootItems, x => x.MarketName, t => t.Name, (x, t) => new
             {
