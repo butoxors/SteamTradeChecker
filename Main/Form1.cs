@@ -31,9 +31,9 @@ namespace Main
             InitializeComponent();
             comboBox1.SelectedIndex = 1;
             radioButton1.Checked = true;
-            cfg = new Config();
 
-            //SetBalance();
+            cfg = new Config();
+            SetBalance();
         }
         /// <summary>
         /// TODO:
@@ -42,10 +42,10 @@ namespace Main
         {
             await Task.Run(() =>
             {
-                var sbalance = Task.Run(() => GetJSONData.MakeCookieRequest("swap", Links.SWAP_BALANCE, cfg));
+                var sbalance = Task.Run(() => GetJSONData.MakeCookieRequest(Links.SWAP_BALANCE, cfg.GenerateCookieContainer("swap")));
                 toolStripStatusLabel3.Text = $"Swap.gg balance: {SwapBalance.FromJson(sbalance.Result).Result * 0.01}";
 
-                var lbalance = Task.Run(() => GetJSONData.MakeCookieRequest("loot", Links.LOOT_ACCOUNT_URL, cfg));
+                var lbalance = Task.Run(() => GetJSONData.MakeCookieRequest(Links.LOOT_ACCOUNT_URL, cfg.GenerateCookieContainer("loot")));
                 toolStripStatusLabel4.Text = $"Loot.farm balance: {LootAccount.FromJson(lbalance.Result).Balance * 0.01}";
             });
         }

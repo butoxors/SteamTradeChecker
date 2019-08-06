@@ -30,7 +30,13 @@ namespace Main.Support
             }
             catch (HttpRequestException e) { return e.Message; }
         }
-        public static async Task<string> MakeCookieRequest(string site, string URL, Config cfg)
+        /// <summary>
+        /// Make GET request with cookies
+        /// </summary>
+        /// <param name="URL"></param>
+        /// <param name="c">cookies</param>
+        /// <returns></returns>
+        public static async Task<string> MakeCookieRequest(string URL, CookieContainer c)
         {
             using (HttpClientHandler handler = new HttpClientHandler())
             {
@@ -39,7 +45,7 @@ namespace Main.Support
                 {
                     http.DefaultRequestHeaders.Add("X-Answer", "42");
 
-                    handler.CookieContainer = cfg.GenerateCookieContainer(site);
+                    handler.CookieContainer = c;
 
                     string html = await http.GetStringAsync(URL);
                     return html;

@@ -11,7 +11,7 @@ namespace Main
 {
     public class Config
     {
-        private Dictionary<string, List<Cookies>> myCookies;
+        private Dictionary<string, List<Cookies>> myCookies = new Dictionary<string, List<Cookies>>();
 
         private string[] configs = { "loot", "swap" };
 
