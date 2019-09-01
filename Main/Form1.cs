@@ -96,18 +96,7 @@ namespace Main
             await Task.Run(() =>
             {
                 lootItems = LootItems.FromJson(GetJSONData.GetLootItems(loot));
-            });/*
-            await Task.Run(() =>
-            {
-                tradeItCore = new TradeItBL(trade);
             });
-            await Task.Run(() =>
-            {
-                var res = Task.Run(() => GetJSONData.GetXHR(Links.MONEY_DOTA));
-                //SaveFile.ProcessWrite(res.Result, "dotamoney");
-                DotaMoneyItems = DotaMoneyJson.FromJson(res.Result);
-                
-            });*/
 
             Task.WaitAll();
             toolStripStatusLabel1.Text = "Swap.gg total item: " + SwapBL.swapItems.Result.Count;
