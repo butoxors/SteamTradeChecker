@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows.Forms;
+using Main.Log;
+using Main.Exceptions;
 
 namespace Main
 {
@@ -13,6 +15,7 @@ namespace Main
         private Dictionary<string, List<Cookies>> myCookies = new Dictionary<string, List<Cookies>>();
 
         private readonly string HOME_CONFIG = Directory.GetCurrentDirectory() + @"\Configs\";
+
         private readonly string HOME_LOG = Directory.GetCurrentDirectory() + @"\Log\";
         private string[] configs = { "loot", "swap" };
 
@@ -20,27 +23,21 @@ namespace Main
         {
             foreach (var s in configs)
             {
-                if (!File.Exists($"{HOME_CONFIG}{s}.cfg"))
-                {
-                    File.Create($"{HOME_LOG}{s}.log");
-                }
                 try
                 {
-                    Log(s, $"Try to read cookie file from {s}");
-
                     var str = File.ReadAllText($@"{HOME_CONFIG}{s}.cfg");
 
                     if (str == null || str.Length == 0)
-                        throw new NullReferenceException($"Can`t read configuration on {HOME_CONFIG}{s}");
+                        throw new ReadConfigException($"Can`t read configuration on { HOME_CONFIG }{ s}");
 
                     myCookies[s] = Cookies.FromJson(str);
 
-                    Log(s, $"Cookies {s} was readed successly!");
+                    if (myCookies[s] == null)
+                        throw new ReadCookieException($"Can`t read cookies from { HOME_CONFIG }{ s}");
+
                 }
-                catch (Exception ex)
+                catch
                 {
-                    Log(s, "Error loading cookie form: " + ex.Message);
-                    MessageBox.Show(ex.Message);
                 }
             }
         }
@@ -59,17 +56,16 @@ namespace Main
                     }
 
                     if (c.Count == 0)
-                        throw new NullReferenceException($"Can`t read cookies! They are empty! Check file : {HOME_CONFIG}{site}.cfg");
+                        throw new ReadCookieException($"Can`t read cookies! They are empty! Check file : {HOME_CONFIG}{site}.cfg");
 
                     return c;
                 }
                 else
                 {
-                    throw new ArgumentNullException("site", "Current site was not found in database! Try use {loot, swap}");
+                    throw new SiteNotFoundException($"Current site: {site} was not found in database! Try use 'loot, swap'");
                 }
-            }catch(Exception ex)
+            }catch
             {
-                Log(site, ex.Message);
                 return null;
             }
         }
@@ -77,14 +73,16 @@ namespace Main
         public IEnumerable<Cookie> GetSteamCookies()
         {
             var cookies = new List<Cookie>();
-
+            string steamCookies = $@"{HOME_CONFIG}/Steam/cookies.cfg";
             try
             {
-                Log("steam", "Try to read Steam cookie...");
-                var str = File.ReadAllText(Directory.GetCurrentDirectory() + "/Configs/Steam/cookies.cfg");
+                var str = File.ReadAllText(steamCookies);
+
+                if (!File.Exists(steamCookies))
+                    throw new FileNotFoundException($@"File {steamCookies} not found!");
 
                 if (str == null || str.Length == 0)
-                    throw new NullReferenceException($"Can`t add cookie from 'cookies.cfg' - file is empty!");
+                    throw new ReadCookieException($"Can`t add cookie from 'cookies.cfg' - file is empty!");
 
                 var data = SteamCookie.FromJson(str);
 
@@ -93,10 +91,9 @@ namespace Main
                     cookies.Add(new Cookie(d.Name, d.Value, d.Path, d.Domain));
                 }
 
-                Log("steam", "Steam cookie readed succefully!");
-            }catch(Exception ex)
+            }catch(FileNotFoundException ex)
             {
-                Log("steam", ex.Message);
+                CLog.Print(LogType.FATAL, ex.Message);
             }
 
             return cookies;
@@ -104,27 +101,28 @@ namespace Main
 
         public string ReadSteamKey()
         {
+            string steamKey = $@"{HOME_CONFIG}/Steam/key.cfg";
+
             try
             {
-                Log("steam", "Try to read Steam API key...");
 
-                if (!File.Exists(Directory.GetCurrentDirectory() + "/Configs/Steam/key.cfg"))
+                if (!File.Exists(steamKey))
                     throw new FileNotFoundException("Error to load steam key, file not found", "key.cfg");
+                var text = File.ReadAllText(steamKey);
 
-                return File.ReadAllText(Directory.GetCurrentDirectory() + "/Configs/Steam/key.cfg");
+                if (text == null || text == string.Empty)
+                    throw new ReadConfigException("Can`t read Steam api key, because file is empty!");
+
+                return text;
 
             }
-            catch(Exception ex)
+            catch(FileNotFoundException ex)
             {
-                Log("steam", ex.Message);
+                CLog.Print(LogType.FATAL, ex.Message);
 
                 return null;
             }
         }
 
-        private void Log(string s, string msg)
-        {
-            File.AppendAllText(Directory.GetCurrentDirectory() + $@"\Log\{s}.log", $"[{DateTime.Now}] - {msg} {s}.\r\n");
-        }
     }
 }

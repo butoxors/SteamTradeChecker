@@ -91,6 +91,11 @@
     <Compile Include="Config.cs" />
     <Compile Include="CookieDef\Cookies.cs" />
     <Compile Include="CookieDef\SteamCookie.cs" />
+    <Compile Include="Exceptions\ReadConfigException.cs" />
+    <Compile Include="Exceptions\ReadCookieException.cs" />
+    <Compile Include="Exceptions\SiteNotFoundException.cs" />
+    <Compile Include="Exceptions\SteamAuthException.cs" />
+    <Compile Include="Exceptions\TradeOfferException.cs" />
     <Compile Include="JSON_Classes\LootFarm\LootBotDotaInv.cs" />
     <Compile Include="JSON_Classes\LootFarm\LootAccount.cs" />
     <Compile Include="JSON_Classes\LootFarm\LootUserInventory.cs" />
@@ -99,7 +104,7 @@
     <Compile Include="JSON_Classes\TradeIt\TradeItDota.cs" />
     <Compile Include="JSON_Classes\TradeIt\TradeItH1Z1.cs" />
     <Compile Include="JSON_Classes\TradeIt\TradeItRust.cs" />
-    <Compile Include="Log\Log.cs" />
+    <Compile Include="Log\CLog.cs" />
     <Compile Include="Log\LogType.cs" />
     <Compile Include="Support\Ajax.cs" />
     <Compile Include="Support\Converter.cs" />

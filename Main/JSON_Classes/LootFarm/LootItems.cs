@@ -26,9 +26,6 @@ namespace Main.JSON_Classes.LootFarm
         [JsonProperty("max")]
         public long Max { get; set; }
 
-        [JsonProperty("rate")]
-        public long Rate { get; set; }
-
     }
 
     public partial class LootItems

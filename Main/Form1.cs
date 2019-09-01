@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SteamTrade;
+using Main.Exceptions;
 
 namespace Main
 {
@@ -41,7 +42,7 @@ namespace Main
 
             cfg = new Config();
 
-            SetBalance();
+            GetBalance();
             StartTrade();
         }
 
@@ -55,25 +56,33 @@ namespace Main
             {
                 Trade = new MainTrade(cfg.GetSteamCookies(), cfg.ReadSteamKey());
 
-                Trade.NewOffer += (e, s) =>
+                Trade.NewOffer += (s, e) =>
                 {
                     NewOffers++;
                     Offer?.Invoke(this, null);
-                    SetBalance();
+                    GetBalance();
+
+                    
                 };
                 Trade.OfferAccepted += (s, e) =>
                 {
                     AcceptedOffers++;
                     Offer?.Invoke(this, null);
-                    SetBalance();
+                    GetBalance();
+                    if (e.TradeOfferState != SteamTrade.TradeOffer.TradeOfferState.TradeOfferStateAccepted)
+                        throw new TradeOfferException("Can`t accept trade offer!");
                 };
-                
-                toolStripStatusLabel5.Text = "Steam status: " + (Trade.Autenticate() ? "SUCCESS" : "FAILURE!");
-                
+
+                bool auth = Trade.Autenticate();
+
+                toolStripStatusLabel5.Text = "Steam status: " + (auth ? "SUCCESS" : "FAILURE!");
+
+                if (!auth)
+                    throw new SteamAuthException("Can`t authorizate to Steam server!");
             });
         }
 
-        private async void SetBalance()
+        private async void GetBalance()
         {
             await Task.Run(() =>
             {
