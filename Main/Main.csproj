@@ -70,18 +70,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AccountControl.Designer.cs">
-      <DependentUpon>AccountControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Alert.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Alert.Designer.cs">
-      <DependentUpon>Alert.cs</DependentUpon>
-    </Compile>
     <Compile Include="BL\SwapBL.cs" />
     <Compile Include="BL\TradeItBL.cs" />
     <Compile Include="Config.cs" />
@@ -122,12 +110,6 @@
     <Compile Include="JSON_Classes\LootFarm\LootItems.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="AccountControl.resx">
-      <DependentUpon>AccountControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Alert.resx">
-      <DependentUpon>Alert.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -160,9 +142,7 @@
   <ItemGroup>
     <Content Include="Table ajax.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\SteamTrade\SteamTrade.csproj">
       <Project>{6cec0333-81eb-40ee-85d1-941363626fc7}</Project>

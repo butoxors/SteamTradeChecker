@@ -42,7 +42,6 @@ namespace Main
 
             cfg = new Config();
 
-            GetBalance();
             StartTrade();
         }
 
@@ -54,31 +53,41 @@ namespace Main
             };
             await Task.Run(() =>
             {
-                Trade = new MainTrade(cfg.GetSteamCookies(), cfg.ReadSteamKey());
+                var cookies = cfg.GetSteamCookies();
+                var key = cfg.ReadSteamKey();
 
-                Trade.NewOffer += (s, e) =>
+                if (cookies != null && key != null)
                 {
-                    NewOffers++;
-                    Offer?.Invoke(this, null);
-                    GetBalance();
+                    Trade = new MainTrade(cookies, cfg.ReadSteamKey());
 
-                    
-                };
-                Trade.OfferAccepted += (s, e) =>
+                    Trade.NewOffer += (s, e) =>
+                    {
+                        NewOffers++;
+                        Offer?.Invoke(this, null);
+                        GetBalance();
+
+
+                    };
+                    Trade.OfferAccepted += (s, e) =>
+                    {
+                        AcceptedOffers++;
+                        Offer?.Invoke(this, null);
+                        GetBalance();
+                        if (e.TradeOfferState != SteamTrade.TradeOffer.TradeOfferState.TradeOfferStateAccepted && e.ItemsToGive?.Count == 0)
+                            throw new TradeOfferException("Can`t accept trade offer!");
+                    };
+
+                    bool auth = Trade.Autenticate();
+
+                    toolStripStatusLabel5.Text = "Steam status: " + (auth ? "SUCCESS" : "FAILURE!");
+
+                    if (!auth)
+                        throw new SteamAuthException("Can`t authorizate to Steam server!");
+                }
+                else
                 {
-                    AcceptedOffers++;
-                    Offer?.Invoke(this, null);
-                    GetBalance();
-                    if (e.TradeOfferState != SteamTrade.TradeOffer.TradeOfferState.TradeOfferStateAccepted)
-                        throw new TradeOfferException("Can`t accept trade offer!");
-                };
-
-                bool auth = Trade.Autenticate();
-
-                toolStripStatusLabel5.Text = "Steam status: " + (auth ? "SUCCESS" : "FAILURE!");
-
-                if (!auth)
-                    throw new SteamAuthException("Can`t authorizate to Steam server!");
+                    throw new ReadCookieException("Cookie has null.");
+                }
             });
         }
 

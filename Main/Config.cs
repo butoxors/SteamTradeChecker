@@ -76,19 +76,24 @@ namespace Main
             string steamCookies = $@"{HOME_CONFIG}/Steam/cookies.cfg";
             try
             {
-                var str = File.ReadAllText(steamCookies);
-
-                if (!File.Exists(steamCookies))
-                    throw new FileNotFoundException($@"File {steamCookies} not found!");
-
-                if (str == null || str.Length == 0)
-                    throw new ReadCookieException($"Can`t add cookie from 'cookies.cfg' - file is empty!");
-
-                var data = SteamCookie.FromJson(str);
-
-                foreach (var d in data)
+                if (File.Exists(steamCookies))
                 {
-                    cookies.Add(new Cookie(d.Name, d.Value, d.Path, d.Domain));
+                    var str = File.ReadAllText(steamCookies);
+                        
+
+                    if (str == null || str.Length == 0)
+                        throw new ReadCookieException("Can`t add cookie from 'cookies.cfg' - file is empty!");
+
+                    var data = SteamCookie.FromJson(str);
+
+                    foreach (var d in data)
+                    {
+                        cookies.Add(new Cookie(d.Name, d.Value, d.Path, d.Domain));
+                    }
+                }
+                else
+                {
+                    throw new FileNotFoundException($@"File {steamCookies} not found!");
                 }
 
             }catch(FileNotFoundException ex)

@@ -13,6 +13,9 @@ namespace Main.CookieDef
     using Main.Support;
     using Newtonsoft.Json;
 
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class Cookies
     {
         [JsonProperty("domain")]
