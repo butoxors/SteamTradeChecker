@@ -13,9 +13,8 @@ In '/bin/Debug/' catalog need create two new folders:
 
 1. Configs
 Files: ***'loot.cfg'*** and ***'swap.cfg'***. 
----
 2. Into ***'Config'*** folder named ***'Steam'***, like ***'Config/Steam/'***
-
+***
 **Files: 'loot.cfg', 'swap.cfg', 'cookies.cfg' and 'key.cfg'**
     
 ***'loot.cfg'*** contain cookies from <http://Loot.Farm> site;
