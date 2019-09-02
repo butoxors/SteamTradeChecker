@@ -12,11 +12,10 @@ In '/bin/Debug/' catalog need create two new folders:
 
 1.Configs
    Files: 'loot.cfg' and 'swap.cfg'. 
-   //This files contain your cookies from Loot.Farm and Swap.GG sites;
 
 2.And into 'Config' folder named 'Steam', like 'Config/Steam/'
 
-    Files: 'cookies.cfg' and 'key.cfg'
+    Files: 'loot.cfg', 'swap.cfg', 'cookies.cfg' and 'key.cfg'
     
     //'cookies.cfg' contain cookie from active Steam session; this needed to auto-accepting trade offers
     
