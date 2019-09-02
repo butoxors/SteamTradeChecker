@@ -4,9 +4,13 @@ Parser of data from sites for the trade of things STEAM:
 -	Using LINQ to fetch data from JSON objects;
 -	Asynchronous programming;
 -	Logging;
+
 ---
+
 Now program exact works with only two sites, it's <http://LOOT.FARM> and <http://SWAP.GG>
+
 ---
+
 Needed folders:
 
 In '/bin/Debug/' catalog need create two new folders:
