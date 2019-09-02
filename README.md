@@ -10,6 +10,11 @@ Parser of data from sites for the trade of things STEAM:
 Now program exact works with only two sites, it's <http://LOOT.FARM> and <http://SWAP.GG>
 
 ---
+**What to do first**
+
+Open and compile solution. After you need add reference in Main project, you need choose SteamTrade reference. Recompile.
+
+---
 
 Needed folders:
 
