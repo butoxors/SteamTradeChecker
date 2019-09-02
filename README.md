@@ -16,6 +16,8 @@ Open and compile solution. After you need add reference in Main project, you nee
 
 ---
 
+**Optional step**
+
 Needed folders:
 
 In '/bin/Debug/' catalog need create two new folders:
