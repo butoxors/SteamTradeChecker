@@ -23,8 +23,8 @@ Files: ***'loot.cfg'*** and ***'swap.cfg'***.
     
 ***'cookies.cfg'*** contain cookie from active Steam session; this needed to auto-accepting trade offers
     
-***'key.cfg'*** contain API Key to your Steam account. If you don't know how it's, go to <https://steamcommunity.com/dev/apikey> link, and copy or generate your personal API Key;`
-    
+***'key.cfg'*** contain API Key to your Steam account. If you don't know how it's, go to <https://steamcommunity.com/dev/apikey> link, and copy or generate your personal API Key;
+---   
 If you need change location your folders, you can  rewrite paths on ***'Config.cs'*** file.
 
 if you don't know how extract cookies, you can setup some extension to your browser like [EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=ru), if you use Chrome browser.
