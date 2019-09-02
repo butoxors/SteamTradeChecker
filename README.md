@@ -18,13 +18,13 @@ In '/bin/Debug/' catalog need create two new folders:
 
     Files: 'loot.cfg', 'swap.cfg', 'cookies.cfg' and 'key.cfg'
     
-    //'loot.cfg' contain cookies from Loot.Farm site;
+    'loot.cfg' contain cookies from Loot.Farm site;
     
-    //'swap.gg' contain cookies from Swap.GG site;
+    'swap.gg' contain cookies from Swap.GG site;
     
-    //'cookies.cfg' contain cookie from active Steam session; this needed to auto-accepting trade offers
+    'cookies.cfg' contain cookie from active Steam session; this needed to auto-accepting trade offers
     
-    //'key.cfg' contain API Key to your Steam account. If you don`t know how it`s, go to https://steamcommunity.com/dev/apikey link, and copy or generate your personal API Key;
+    'key.cfg' contain API Key to your Steam account. If you don`t know how it`s, go to https://steamcommunity.com/dev/apikey link, and copy or generate your personal API Key;
     
 If you need change location your folders, you can  rewrite paths on 'Config.cs' file.
 
